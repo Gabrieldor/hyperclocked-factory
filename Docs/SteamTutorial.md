@@ -6,6 +6,8 @@ The Steam Age serves as a hands-on tutorial. Every step teaches a core mechanic:
 - Pipe routing (Bronze Dust → Furnace)
 - Machine placement
 - Machine-to-machine item flow
+- Proximity-based fluid intake (Boiler next to Water Node)
+- Fluid pipes vs item pipes distinction
 - Machine upgrade / replacement (Primitive → Steam Workbench)
 
 The player never reads a wall of text. They learn by doing each step to progress.
@@ -26,6 +28,11 @@ A fixed chest that cannot be moved or removed. Contains:
 | Stone | 16 | Craft first Furnace |
 
 > **Why dusts instead of ores?** Skipping the ore → dust step removes the need to teach the Macerator in the first five minutes. The player learns one mechanic at a time. Macerating is introduced later as "how you get more resources".
+
+### Water Node
+A pre-placed, infinite water source on the factory floor. Cannot be moved or removed. Provides water to any Boiler placed within 1 tile of it (no pipe required). Once the player unlocks **Fluid Pipes**, water can be routed freely at any distance.
+
+The Water Node is visually distinct from ore nodes — it uses an animated water tile rather than a static ore icon.
 
 ### Primitive Workbench
 A pre-placed machine. It has:
@@ -116,17 +123,31 @@ Workbench recipe:
   6× Bronze Ingot → 1× Alloy Smelter
 ```
 
-The player places both on the floor. The tutorial explains:
-- The **Boiler** needs Coal + Water to produce Steam
-- The **Alloy Smelter** will replace the Workbench's Bronze Dust recipe with a proper automated Bronze production line
+The player places both on the floor.
 
-> **Open question:** Where does Water come from for the Boiler?
-> Options:
-> - A fixed **Water Node** is pre-placed on the floor (infinite, free — simplest)
-> - A **Water Pump** machine is crafted later and placed on a water node
-> - Water is auto-supplied to Boilers with no pipe needed (fully abstracted)
->
-> Recommendation: **Fixed Water Node, pre-placed and infinite.** Water management adds friction without interesting decisions at this tier. It can be revisited at MV if needed.
+**Placing the Boiler — proximity rule (tutorial-enforced):**
+The tutorial highlights the pre-placed Water Node and requires the player to place the Boiler in the tile directly adjacent to it. When adjacent, the Boiler automatically draws water — no pipe needed.
+
+```
+[WATER NODE] [BOILER]   ← 1 tile apart, water drawn automatically
+```
+
+A tooltip explains: *"The Boiler is close enough to the water source to draw from it directly. Craft Fluid Pipes later to place your Boiler anywhere."*
+
+Coal still needs to be piped in via an item pipe from the Starter Chest (or a buffer). This reinforces the difference: **solid items use item pipes, fluids use proximity or fluid pipes**.
+
+```
+Starter Chest ──item pipe──► Boiler (Coal input)
+Water Node    ──proximity──► Boiler (Water input, no pipe needed yet)
+Boiler        ──???─────────► Steam machines (steam distribution — see below)
+```
+
+**Steam distribution from the Boiler:**
+The Boiler outputs steam. Like water, steam is a fluid — it uses the same proximity rule initially. Steam machines placed adjacent to the Boiler receive steam automatically. Once Fluid Pipes are unlocked, steam can be routed freely.
+
+This means the tutorial naturally clusters the first machines around the Boiler, which is a physically intuitive layout.
+
+- The **Alloy Smelter** will replace the Workbench's Bronze Dust recipe with a proper automated Bronze production line
 
 ---
 
@@ -177,10 +198,30 @@ The Primitive Workbench only supports these recipes (no others):
 
 ---
 
+## Fluid Pipes vs Item Pipes
+
+Two distinct pipe types exist in the game. The tutorial establishes both:
+
+| | Item Pipe | Fluid Pipe |
+|---|---|---|
+| Carries | Solid items (ores, ingots, dusts, components) | Liquids and gases (water, steam, chemicals) |
+| Tutorial introduction | Step 3 (Bronze Dust → Furnace) | Unlocked after tutorial via Steam Workbench |
+| Pre-fluid alternative | — | Proximity (1 tile from source) |
+| Visual | Dark metal pipe | Blue-tinted pipe with flow animation |
+
+**Fluid Pipe unlock recipe (Steam Workbench):**
+```
+4× Bronze Ingot → 4× Fluid Pipe segments
+```
+
+Once the player has Fluid Pipes, the proximity rule no longer applies — the Boiler and Water Node can be placed anywhere on the floor as long as they are connected by a Fluid Pipe chain.
+
+---
+
 ## Steam Workbench — Additional Capabilities
 
 The Steam Workbench is a proper steam-powered machine. It:
-- Consumes Steam from a connected Boiler
+- Consumes Steam from a connected Boiler (adjacent or via Fluid Pipe)
 - Has a larger recipe list than the Primitive Workbench
 - Can be crafted in multiples (as many as the player wants, using Bronze)
 - Crafts all remaining Steam Age machines:
@@ -190,6 +231,7 @@ The Steam Workbench is a proper steam-powered machine. It:
 | Steam Extractor | 8× Bronze Ingot + 4× Stone |
 | Steam Macerator | 10× Bronze Ingot + 4× Stone |
 | Steam Compressor | 8× Bronze Ingot + 4× Stone |
+| Fluid Pipe (×4) | 4× Bronze Ingot |
 | Additional Steam Workbench | 12× Bronze Ingot |
 
 ---
@@ -202,9 +244,13 @@ The Steam Workbench is a proper steam-powered machine. It:
 | Items flowing from chest to machine | Step 1 |
 | Crafting a machine item | Step 2 |
 | Placing a machine on the floor | Step 2 |
-| Drawing a pipe between machines | Step 3 |
+| Drawing an item pipe between machines | Step 3 |
 | Machine-to-machine item routing | Step 3–4 |
 | Closing a pipe loop | Step 4 |
 | Building a power source (Boiler) | Step 5 |
+| Proximity fluid intake (Water Node → Boiler) | Step 5 |
+| Proximity steam distribution (Boiler → machines) | Step 5 |
+| Item pipe vs fluid pipe distinction | Step 5 |
 | Steam-powered machines | Step 5 |
 | Machine upgrade / replacement | Step 6 |
+| Fluid Pipe crafting and placement | Post-tutorial free play |
