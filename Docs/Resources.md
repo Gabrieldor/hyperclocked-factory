@@ -95,11 +95,13 @@ Lead Ore ──► Macerator ──► Impure Lead Dust ──► Chemical React
 
 ### Cinnabar Processing
 
-Cinnabar ore is processed to extract Mercury fluid. Processing method TBD when LV machines are finalized.
+```
+Cinnabar Ore ──► Macerator ──► Cinnabar Dust ──┐
+                                                 ├──► Chemical Reactor ──► Mercury (mL) + SO₂ (mL)
+Water ──► Electrolyzer ──► Oxygen ─────────────┘
+```
 
-```
-Cinnabar Ore ──► [processing] ──► Mercury (mL)
-```
+SO₂ is kept as a usable fluid — feeds the LV Sulfuric Acid route.
 
 ### Boules (MV/HV)
 
@@ -117,7 +119,8 @@ High-purity semiconductor crystal ingots. Made in the Blast Furnace.
 | Oxygen | Electrolyzer (Water → O₂ + H₂) | TBD uses |
 | Hydrogen | Electrolyzer (Water → O₂ + H₂) | TBD uses |
 | Nitrogen | TBD | TBD uses |
-| Mercury | Cinnabar processing | Lead ore refining; Arsenic extraction |
+| Mercury | Cinnabar Dust + Oxygen → Chemical Reactor | Lead ore refining; Arsenic extraction |
+| SO₂ (Sulfur Dioxide) | Cinnabar processing byproduct | LV Sulfuric Acid route: 500 mL SO₂ + 250 mL O₂ + 500 mL Water → 1000 mL H₂SO₄ (2× yield vs Steam tier recipe) |
 | Others | TBD | Defined when LV recipe chains are finalized |
 
 ---
