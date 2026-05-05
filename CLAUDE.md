@@ -2,7 +2,7 @@
 
 ## Project
 
-Mobile factory/automation game inspired by Nomifactory (GregTech Minecraft modpack). Built in Unity 2D with pixel art. See `GDD.md` for the full game design document and `Docs/` for detailed design docs.
+Mobile factory/automation game inspired by Nomifactory (GregTech Minecraft modpack). Built in Unity 2D with pixel art. See `GDD.md` for the full GDD and `Docs/` for detailed design docs.
 
 ---
 
@@ -12,93 +12,78 @@ Mobile factory/automation game inspired by Nomifactory (GregTech Minecraft modpa
 |---|---|
 | Platform | Mobile — iOS + Android |
 | Engine | Unity 2D (URP 2D) |
-| Perspective | Top-down 2D |
-| Art style | Pixel art, 32x32 px per tile |
+| Perspective | Top-down 2D, pixel art 32×32 px/tile |
 | Player | Pure builder / cursor — no walking avatar |
-| World | Fixed factory floor, 16×16 start → 64×64 max (research-unlocked expansions) |
+| World | Fixed grid, 16×16 start → 64×64 max (research expansions) |
 | Item transfer | Item pipes only — no conveyor belts |
-| Fluid transfer | Fluid pipes (separate type) — carry water, steam, chemicals |
-| Power | Voltage tiers: Steam → LV → MV → HV (HV is v1.0 final tier) |
-| Progression | Research point tree — producing items generates RP |
-| Resource nodes | Fixed slots on floor; player places Extractor machines; nodes never deplete |
-| Node count | Start 2–3; each floor expansion adds 1–2 new resource type slots |
-| Recipe depth | Deep — 6–8 steps at HV end-game |
+| Fluid transfer | Fluid pipes (separate layer) — water, steam, chemicals |
+| Power | Voltage tiers: Steam → LV → MV → HV (v1.0 final) |
+| Progression | Milestone-based — producing gate items auto-unlocks machines and tier transitions; no currency |
+| Resource nodes | Fixed floor slots; Extractor machines placed on them; never deplete |
+| Node count | Start 2–3; each floor expansion adds 1–2 new types |
+| Recipe depth | 6–8 steps at HV end-game |
 | Monetization | Free with cosmetics only — no pay-to-win, no timers |
+| Grid layers | 3 overlay layers (item pipes, fluid pipes, cables); switching shows machine layer as ghost |
+| Machine tile size | 1×1; multiblocks TBD separately |
+| Transport | Time-based; 1 tick = 1 second |
+| Save slots | Single save only |
 
 ---
 
 ## Tier Structure (v1.0)
 
-| Tier | Unlock Condition | Key Material | New Power | Recipe Depth |
+| Tier | Unlock Condition | Key Material | Power | Recipe Depth |
 |---|---|---|---|---|
-| Steam | Start (tutorial) | Bronze | Steam (coal-fired Boiler) | 2–3 steps |
+| Steam | Start (tutorial) | Bronze | Steam — Boiler | 2–3 steps |
 | LV | Produce Steel in Brick Furnace | Steel | EU — 8 EU/t | 3–5 steps |
 | MV | Produce Aluminium in LV Blast Furnace | Stainless Steel | EU — 32 EU/t | 4–6 steps |
 | HV | Produce Stainless Steel in MV Alloy Smelter | AE Controller | EU — 128 EU/t | 6–8 steps |
 
-HV endgame victory condition: build and activate the **Applied Energistics Controller**.
+Victory: build and activate the **Applied Energistics Controller**.
 
 ---
 
-## Steam Age — Tutorial & Bootstrapping
+## Steam Age
 
-The Steam Age is the tutorial. It teaches every core mechanic hands-on with no text walls.
+Full tutorial flow: `Docs/SteamTutorial.md` — Full recipe set: `Docs/Recipes_Steam.md`
 
-### Starting Floor State
-- **Starter Chest** — pre-placed, immovable. Contains: 32× Coal, 24× Copper Dust, 8× Tin Dust, 16× Stone
-- **Primitive Workbench** — pre-placed, no power, instant crafting. Limited recipe whitelist only
-- **Water Node** — pre-placed, infinite, immovable. Provides water via proximity or fluid pipe
-
-### Tutorial Steps
-1. Workbench: Copper Dust + Tin Dust → Bronze Dust (teaches recipe selection)
-2. Workbench: Stone → Primitive Furnace (teaches machine crafting)
-3. Place Furnace; draw item pipe from Workbench → Furnace (teaches pipe routing)
-4. Pipe Furnace output → Workbench (teaches closing a loop)
-5. Craft Boiler + Alloy Smelter; place Boiler **1 tile adjacent to Water Node** (teaches proximity fluid rule)
-6. Workbench: self + 12× Bronze Ingot → Steam Workbench — **Primitive Workbench is consumed** (teaches machine upgrade)
-
-### Water Node — Proximity Rule
-- Boiler placed **1 tile adjacent** to Water Node auto-draws water with no pipe
-- Same rule applies to steam output: machines adjacent to Boiler receive steam automatically
-- Once **Fluid Pipes** are crafted, proximity is no longer required — free placement unlocked
-- Fluid Pipes recipe: 4× Bronze Ingot → 4× Fluid Pipe segments (crafted in Steam Workbench)
-
-### Primitive Workbench — Recipe Whitelist
-| Recipe | Input | Output |
-|---|---|---|
-| Bronze Dust | 3× Copper Dust + 1× Tin Dust | 1× Bronze Dust |
-| Primitive Furnace | 8× Stone | 1× Primitive Furnace |
-| Boiler | 8× Stone + 4× Bronze Ingot | 1× Boiler |
-| Alloy Smelter | 6× Bronze Ingot | 1× Alloy Smelter |
-| Steam Workbench | 1× Primitive Workbench (self) + 12× Bronze Ingot | 1× Steam Workbench |
-
-### Pipe Types
-| Type | Carries | Visual | Unlock |
-|---|---|---|---|
-| Item Pipe | Solid items (ores, ingots, dusts, components) | Dark metal | Available from start |
-| Fluid Pipe | Liquids and gases (water, steam, chemicals) | Blue-tinted, animated | Crafted in Steam Workbench |
+Key implementation facts:
+- Starter Chest (pre-placed, immovable): 32× Coal, 24× Copper Dust, 8× Tin Dust, 32× Stone, 4× Item Pipe
+- Primitive Workbench (pre-placed) + Water Node (pre-placed, infinite, immovable)
+- Water Node proximity rule: 1 tile adjacent = auto-draw, no pipe needed
+- Steam no-power behavior: machine halts, no damage
+- Boiler: 1 Coal/8s fuel slot + Water → 8 L/s steam; each steam machine has a 32 L buffer; steam backs up when buffer full (no waste)
+- LV gate materials: Steel Ingot (Brick Furnace) + Primitive Circuit (Chemical Reactor chain)
+- Macerator outputs **Impure Dust** (except Coal → Coal Dust directly); must be washed before smelting
+- Steam Washer: Impure Dust + Water → Pure Dust + Stone; first machine with 2 output ports; primary Stone source
+- Sulfur Ore node unlocked via mid-Steam milestone — feeds Sulfuric Acid → Etched Copper Board → Primitive Circuit chain
+- Chemical Reactor intro teaches chemical fluids and non-water fluid pipe routing
 
 ---
 
 ## Architecture Guidelines
 
 - **Tilemap**: Floor via Unity Tilemap. Machines and pipes are GameObjects managed by `GridManager`.
-- **ScriptableObjects**: All machine, recipe, and research node data lives in SO assets — no hardcoded content.
-- **Item pipe graph**: Adjacency graph. BFS on item output to find nearest accepting machine input.
-- **Fluid pipe graph**: Separate adjacency graph for fluids. Proximity rule (1-tile radius) supplements pipes during Steam tier.
-- **Save**: Custom `GridState` serialized to JSON at `Application.persistentDataPath`.
-- **Input**: Unity Input System — pointer abstraction supports both touch (device) and mouse (editor).
-- **Power network**: Separate layer/graph from both pipe networks. EU consumed per machine tick.
+- **ScriptableObjects**: All machine, recipe, and research data in SO assets — no hardcoded content.
+- **Item pipe graph**: Adjacency graph. BFS on output to find nearest accepting input.
+- **Port assignment**: No fixed port directions on machines. Any adjacent pipe tile can be assigned input or output by the player. Assignment stored in `GridState` (save data). `MachineData` SO carries no port offset arrays.
+- **Color coding**: every pipe/cable segment has a color. A segment only connects to adjacent segments of the same color — allows independent networks to share the same area. Machines accept any color on their ports. Color stored per tile in `GridState`; rendered via tint over bitmask sprites.
+- **Fluid pipe graph**: Separate adjacency graph. 1-tile proximity auto-connects during Steam tier.
+- **Grid layers**: 3 independent overlay layers (item pipes, fluid pipes, cables). Ghost overlay on switch.
+- **Transport**: Time-based; 1 tick = 1 second.
+- **Save**: Single slot. `GridState` → JSON at `Application.persistentDataPath`.
+- **Input**: Unity Input System — pointer abstraction (touch + mouse parity).
+- **Power**: Cable layer/graph separate from pipe networks. EU consumed per machine tick.
 
 ---
 
 ## Development Phases
 
-- **Phase 0** — Pre-production: recipe spreadsheet, research tree design, machine lists, UI wireframes, art guide ← *current*
-- **Phase 1** — Core prototype: grid, item pipes, Workbench + Furnace end-to-end, RP counter
-- **Phase 2** — Systems complete: fluid pipes, power/cables, research tree UI, all Steam+LV content, save/load
+- **Phase 0** — Pre-production ← *current*. See `PHASE_0_CHECKLIST.md`
+- **Phase 1** — Core prototype: grid, item pipes, Workbench + Furnace end-to-end, milestone tracker UI
+- **Phase 2** — Systems: fluid pipes, power/cables, milestone tree UI, all Steam+LV content, save/load
 - **Phase 3** — MV + HV tier content, Applied Energistics system
-- **Phase 4** — Polish: full art, audio, particles, tutorial flow, Android profiling
+- **Phase 4** — Polish: art, audio, particles, tutorial flow, Android profiling
 - **Phase 5** — Launch: cosmetics store, beta, App Store + Google Play
 
 ---
@@ -111,13 +96,10 @@ The Steam Age is the tutorial. It teaches every core mechanic hands-on with no t
 | Phase 0 Checklist | `PHASE_0_CHECKLIST.md` |
 | Tier Structure | `Docs/TierStructure.md` |
 | Steam Tutorial | `Docs/SteamTutorial.md` |
+| Steam Tier Recipes | `Docs/Recipes_Steam.md` |
 
 ---
 
 ## Balancing (tune in playtesting)
 
-- RP accumulation rate per item type
-- Floor expansion RP cost / tier gate
-- Power cable range before transformer required
-- Machine processing times per tier
-- Steam/EU consumption rates per machine
+- Floor expansion milestone trigger items, cable range before transformer, processing times per tier, steam/EU rates per machine

@@ -2,7 +2,7 @@
 
 ## Concept
 
-A mobile factory/automation game inspired by Nomifactory (GregTech modpack for Minecraft). The player builds increasingly complex production lines on a fixed factory floor, routing resources through machines via item pipes, powered by a voltage-tiered energy system. Progression is driven by a research tree unlocked by producing items. Free-to-play with cosmetics-only monetization.
+A mobile factory/automation game inspired by Nomifactory (GregTech modpack for Minecraft). The player builds increasingly complex production lines on a fixed factory floor, routing resources through machines via item pipes, powered by a voltage-tiered energy system. Progression is milestone-based: producing key items automatically unlocks new machines, floor expansions, and tier transitions — no currency or research points. Free-to-play with cosmetics-only monetization.
 
 ---
 
@@ -16,11 +16,16 @@ A mobile factory/automation game inspired by Nomifactory (GregTech modpack for M
 | Player control | Pure builder / cursor (no avatar) |
 | World | Fixed factory floor (grid-based) |
 | Item transfer | Pipes only (no conveyor belts) |
-| Power | Full voltage tiers: LV → MV → HV → EV → IV |
-| Progression | Research point tree (items produced = RP) |
+| Power | Full voltage tiers: Steam → LV → MV → HV (v1.0); EV/IV future |
+| Progression | Milestone-based — producing gate items unlocks machines, floors, and tier transitions |
 | Resource nodes | Fixed input points + Extractor machines placed on them |
 | Nodes deplete? | No — infinite (mobile QoL) |
 | Monetization | Free with cosmetics only (no pay-to-win, no timers) |
+| Grid layers | Item pipes, fluid pipes, cables each occupy a separate layer; switching layers shows machine layer as faint ghost |
+| Machine tile size | 1×1; multiblocks to be designed separately |
+| Transport | Time-based — items and fluids travel over ticks, not instantly |
+| Tick duration | 1 second |
+| Save slots | Single save only |
 
 ---
 
@@ -49,11 +54,9 @@ Place Extractor on Node
        |
    Machines process items through recipe chains
        |
-   Output items --> Research Points (RP) generated
+   Producing a milestone item → auto-unlocks new machines / floor expansion / tier transition
        |
-   RP spent on Research Tree (new machines / recipes / expansions)
-       |
-   New recipes require higher voltage tier
+   New machines enable deeper recipe chains
        |
    Build generators, upgrade cables, reach next tier
        |
@@ -66,7 +69,8 @@ Place Extractor on Node
 
 ### 1. Grid / Tile System
 - Fixed NxN tile grid, grows from 16x16 to 64x64 via research
-- Each tile holds: machine, pipe segment, node slot, or empty floor
+- Each tile holds a machine (1×1) on the machine layer; pipes and cables occupy separate overlay layers on the same grid position
+- Player switches active layer via toolbar; inactive layers shown as faint ghost for reference
 - Tiles snap to grid on placement
 - Unity `Tilemap` for floor layer; GameObjects for machines/pipes on top
 
@@ -75,7 +79,9 @@ Place Extractor on Node
 - Items routed based on machine output → nearest accepting machine input (BFS)
 - Visual: pipe sprites auto-connect to neighbors via 4-directional bitmask
 - Items are invisible in transit (GT pipe behavior, not Factorio belts)
-- Late unlock: pipe priority / filter configuration
+- **Color coding:** each pipe/cable segment has an assigned color; a segment only connects to adjacent segments of the same color. Allows multiple independent networks to cross the same area. Machines connect to any color on their assigned port.
+- Tap pipe → cycle color (or open color picker panel)
+- Each pipe tile stores its color in `GridState`; art uses color tinting over the base bitmask sprites
 
 ### 3. Machine System
 - Each machine: inputs (item + count), outputs (item + count), voltage tier, processing time
@@ -94,20 +100,20 @@ Place Extractor on Node
 - Node slots are pre-placed on map (visible, inactive until Extractor placed)
 - Each node: fixed resource type (e.g. Iron Ore, Copper Ore, Coal)
 - Extractor pulls resources into connected pipe at a base rate
-- Extraction rate upgradeable via research
+- New node types added when floor expands via milestone unlock
 
-### 6. Research Tree
-- Producing output items generates RP passively
-- RP spent on tree nodes organized by voltage tier branch
-- Each node unlocks: machine type, recipe, pipe upgrade, or floor expansion
-- Tree always visible — player always knows what they're working toward
+### 6. Milestone Tree
+- No currency — unlocks trigger automatically the first time a gate item is produced
+- Tree UI is always visible as a roadmap: locked (gray) / available (lit) / unlocked (green)
+- Each milestone unlocks: a machine type, a recipe set, a floor expansion, or a tier transition
+- Milestones organized by tier branch; player always sees what they're working toward and why
 
 ### 7. Touch UI
 - Tap empty tile → build menu
 - Tap machine → machine panel
 - Tap pipe → flow info
 - Pinch to zoom, drag to pan
-- Bottom toolbar: Research Tree | Build | Inspect | Settings
+- Bottom toolbar: Milestones | Build | Inspect | Settings
 - Tap-to-select + tap-to-place (no drag-and-drop)
 
 ### 8. Cosmetics
@@ -143,12 +149,12 @@ Place Extractor on Node
 - [ ] Pipe network with basic item routing
 - [ ] Extractor + Furnace working end-to-end
 - [ ] Resource node → Extractor → Pipe → Furnace → Output
-- [ ] Basic RP counter UI
+- [ ] Basic milestone tracker UI
 
 ### Phase 2 — Systems Complete
 - [ ] Power / cable network (LV only)
 - [ ] Full machine state machine
-- [ ] Research tree UI
+- [ ] Milestone tree UI
 - [ ] All LV machines and recipes
 - [ ] Machine info panel
 - [ ] Save / load (JSON, `Application.persistentDataPath`)
@@ -157,7 +163,7 @@ Place Extractor on Node
 - [ ] MV machines and recipes
 - [ ] MV power generation
 - [ ] Voltage upgrade flow
-- [ ] Research tree MV branch
+- [ ] Milestone tree MV branch
 
 ### Phase 4 — Polish
 - [ ] Full pixel art pass (machines, pipes, floor, UI)
@@ -187,7 +193,6 @@ Place Extractor on Node
 
 ## Balancing — To Be Tuned in Playtesting
 
-- RP accumulation rate per item type
-- Floor expansion RP cost / tier requirement
+- Floor expansion milestone trigger items (what item produced unlocks each expansion)
 - Power cable range before transformer needed
 - Machine processing times per tier
