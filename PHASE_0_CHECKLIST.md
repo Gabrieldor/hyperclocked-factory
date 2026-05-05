@@ -57,19 +57,26 @@
 ## 3. LV Tier — Design
 
 ### 3a. Resources (new nodes unlocked at LV)
-- [ ] Confirm LV introduces: **Iron** (available late Steam via expansion; confirm LV adds more)
-- [ ] Decide if Redstone is an LV node
-- [ ] Decide if Gold is an LV node
-- [ ] Decide if Stone/Sand becomes available as a node or crafted from existing ores
-- [ ] Total LV node slots on floor (including Steam tier nodes carried over)
+- [x] Confirm LV introduces: Gold, Clay, Lead (Pb), Nickel, Cinnabar (Iron was late-Steam, not new at LV) → `Docs/Resources.md`
+- [x] Decide if Redstone is an LV node → **No** — Silicon (from Clay) and Gold cover circuit needs
+- [x] Decide if Gold is an LV node → **Yes** → `Docs/Resources.md`
+- [x] Stone/Sand node → Stone remains Washer byproduct only; no dedicated node needed
+- [x] Total LV node slots: **6** (3 Steam carry-over + 3 new); 10 ore types → ~60% rule → `Docs/Resources.md`
+- [x] Tiny Pile system: 9× Tiny Pile → 1× Dust via Compressor; first used for Gallium → `Docs/Resources.md`
+- [x] Gallium source: Tiny Pile byproduct of Clay electrolysis → `Docs/Resources.md`
+- [x] Arsenic source: Impure Lead Dust + Mercury → Chemical Reactor → Lead Dust + Arsenic Dust → `Docs/Resources.md`
 
 ### 3b. Power System — LV
-- [ ] Define EU/t (energy units per tick) as the power unit
-- [ ] Define LV voltage ceiling (e.g. 32 EU/t max per cable)
-- [ ] Define the LV Generator machine: Coal/fuel → 8 EU/t (example)
-- [ ] Define cable: item that connects generator to machines (1 tile wide, limited range?)
-- [ ] Define what happens on overvolt (machine damage / explosion / just shuts off — pick one)
-- [ ] Define Transformer concept for later tiers (not needed at LV, but spec it now)
+- [x] Define power unit → **W (Watts = V × A)**; not EU/t → `Docs/Energy.md`
+- [x] Define voltage tiers → LV 32V / MV 128V / HV 512V (×4 per tier) → `Docs/Energy.md`
+- [x] Define cables → 1A / 4A / 8A per tier; lossless → `Docs/Energy.md`
+- [x] Define overvolt → Generator V > cable V → cable destroyed; cable V > machine V → machine destroyed → `Docs/Energy.md`
+- [x] Define overcurrent → W demand > cable capacity → cable burns (contained; remove to replace) → `Docs/Energy.md`
+- [x] Define overclocking → higher-tier machine runs same recipe; 4× W, 2× speed per tier step → `Docs/Energy.md`
+- [x] Define Transformer → passive 1×1; steps voltage one tier up or down → `Docs/Energy.md`
+- [x] Define Battery Buffer → 8 slots, voltage-locked, 1A per slot, charges + buffers → `Docs/Energy.md`
+- [x] Define battery tiers → Tier I: 8K Ws / Tier II: 16K Ws / Tier III: 32K Ws → `Docs/Energy.md`
+- [ ] Define the LV Generator machine: fuel type(s), V output, A output → TBD
 
 ### 3c. LV Tier Machines (target: 6–10 machines)
 - [ ] **LV Furnace** — Ore/Dust → Ingot (faster than Steam, runs on EU)
@@ -204,6 +211,8 @@ No currency. Unlocks trigger automatically the first time a gate item is produce
 | Deliverable | File/Location | Done |
 |---|---|---|
 | Tier structure doc | `Docs/TierStructure.md` + `CLAUDE.md` | [x] |
+| Energy system doc | `Docs/Energy.md` | [x] |
+| Resources doc | `Docs/Resources.md` | [x] |
 | Steam tier machine list | `Docs/Recipes_Steam.md` | [x] |
 | Steam tier recipes | `Docs/Recipes_Steam.md` | [x] |
 | LV tier machine list | `Docs/Recipes_LV.md` | [ ] |
