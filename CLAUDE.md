@@ -56,7 +56,8 @@ Key implementation facts:
 - LV gate materials: Steel Ingot (Brick Furnace) + Primitive Circuit (Chemical Reactor chain)
 - Macerator outputs **Impure Dust** (except Coal → Coal Dust directly); must be washed before smelting
 - Steam Washer: Impure Dust + Water → Pure Dust + Stone; first machine with 2 output ports; primary Stone source
-- Sulfur Ore node unlocked via mid-Steam milestone — feeds Sulfuric Acid → Etched Copper Board → Primitive Circuit chain
+- Two parallel branches after Steam Workbench: A) Impure Dust → Washer + Brick Furnace; B) Bronze Plate → Compressor + Chemical Reactor → Sulfur Ore node → Sulfuric Acid → Primitive Circuit
+- LV gate requires both branches: Steel Ingot (Branch A) + Primitive Circuit (Branch B)
 - Chemical Reactor intro teaches chemical fluids and non-water fluid pipe routing
 
 ---
@@ -97,6 +98,7 @@ Key implementation facts:
 | Tier Structure | `Docs/TierStructure.md` |
 | Steam Tutorial | `Docs/SteamTutorial.md` |
 | Steam Tier Recipes | `Docs/Recipes_Steam.md` |
+| Steam Milestone Tree | `Docs/Milestones_Steam.md` |
 
 ---
 

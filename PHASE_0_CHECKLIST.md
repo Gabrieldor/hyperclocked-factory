@@ -112,25 +112,18 @@ No currency. Unlocks trigger automatically the first time a gate item is produce
 - [ ] Define starting state: what is available at floor generation with zero milestones hit?
 - [ ] Define floor expansion triggers: what item/machine unlocks each floor size step?
 
-### 5b. Steam Milestones (write out each node + unlock condition)
-- [ ] **Start (free):** Primitive Workbench + Primitive Furnace + Boiler + Steam Extractor available
-- [ ] **Milestone:** Produce Bronze Ingot → unlock Alloy Smelter + Steam Workbench recipes
-- [ ] **Milestone:** Build Steam Workbench → unlock floor expansion 20×20 + Steam Macerator
-- [ ] **Milestone:** Produce Impure Dust (any) → unlock Steam Washer
-- [ ] **Milestone:** Produce Bronze Plate → unlock Steam Compressor + Chemical Reactor
-- [ ] **Milestone:** Produce Sulfuric Acid → unlock Sulfur Ore node on floor
-- [ ] **Milestone:** Produce Primitive Circuit → unlock Brick Furnace recipe
-- [ ] **Milestone:** Produce Steel Ingot → **LV tier unlocked** + floor expansion 32×32
-- [ ] *(Optional)* Milestone: Produce N Bronze Ingots → Extractor rate upgrade ×2
+### 5b. Steam Milestones
+- [x] Steam milestone tree written → `Docs/Milestones_Steam.md`
+- [ ] Fill in OPT1 Bronze Ingot count threshold (tune in playtesting)
 
 ### 5c. LV Milestones
-- [ ] Outline all LV milestones (one per new machine + key recipe sets)
+- [ ] Write LV milestone tree → `Docs/Milestones_LV.md`
 - [ ] Define which LV milestone unlocks the next floor expansion (toward 64×64)
 
 ### 5d. Tree Diagram
-- [ ] Sketch the tree (`Docs/MilestoneTree.md` or image)
+- [x] Steam tree diagram included in `Docs/Milestones_Steam.md`
+- [ ] LV+ tree diagram → `Docs/Milestones_LV.md`
 - [ ] Ensure no milestone is orphaned — every node has a visible path from start
-- [ ] Ensure critical-path milestones aren't buried behind optional ones
 
 ---
 
@@ -216,7 +209,8 @@ No currency. Unlocks trigger automatically the first time a gate item is produce
 | LV tier machine list | `Docs/Recipes_LV.md` | [ ] |
 | LV tier recipes | `Docs/Recipes_LV.md` | [ ] |
 | MV+ recipes (50%) | `Docs/Recipes_MV.md` | [ ] |
-| Milestone tree diagram | `Docs/MilestoneTree.md` or image | [ ] |
+| Steam milestone tree | `Docs/Milestones_Steam.md` | [x] |
+| LV milestone tree | `Docs/Milestones_LV.md` | [ ] |
 | Art style guide | `Docs/ArtGuide.md` | [ ] |
 | DB32 palette swatches | `Art/Palette/` | [ ] |
 | Pixel font files | `Art/Fonts/` | [ ] |
