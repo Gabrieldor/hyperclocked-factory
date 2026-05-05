@@ -2,7 +2,7 @@
 
 ## Concept
 
-A mobile factory/automation game inspired by Nomifactory (GregTech modpack for Minecraft). The player builds increasingly complex production lines on a fixed factory floor, routing resources through machines via item pipes, powered by a voltage-tiered energy system. Progression is milestone-based: producing key items automatically unlocks new machines, floor expansions, and tier transitions — no currency or research points. Free-to-play with cosmetics-only monetization.
+A mobile factory/automation game inspired by Nomifactory (GregTech modpack for Minecraft). The player builds increasingly complex production lines on a fixed factory floor, routing resources through machines via item pipes, powered by a voltage-tiered energy system. Progression is milestone-based: producing key items automatically unlocks new machines, floor expansions, and tier transitions — no currency, no points, no timers. Free-to-play with cosmetics-only monetization.
 
 ---
 
@@ -35,7 +35,7 @@ A mobile factory/automation game inspired by Nomifactory (GregTech modpack for M
 |---|---|
 | Tile size | 32x32 px |
 | Starting floor | 16x16 tiles |
-| Max floor | 64x64 tiles (expanded via research) |
+| Max floor | 64x64 tiles (expanded via milestones) |
 | Base resolution | 360x640 |
 | Resource nodes | Start with 2–3; each floor expansion adds 1–2 new node types |
 | LV recipe depth | 2–3 steps |
@@ -68,7 +68,7 @@ Place Extractor on Node
 ## Core Systems
 
 ### 1. Grid / Tile System
-- Fixed NxN tile grid, grows from 16x16 to 64x64 via research
+- Fixed NxN tile grid, grows from 16x16 to 64x64 via milestones
 - Each tile holds a machine (1×1) on the machine layer; pipes and cables occupy separate overlay layers on the same grid position
 - Player switches active layer via toolbar; inactive layers shown as faint ghost for reference
 - Tiles snap to grid on placement
@@ -108,13 +108,46 @@ Place Extractor on Node
 - Each milestone unlocks: a machine type, a recipe set, a floor expansion, or a tier transition
 - Milestones organized by tier branch; player always sees what they're working toward and why
 
-### 7. Touch UI
-- Tap empty tile → build menu
-- Tap machine → machine panel
-- Tap pipe → flow info
+### 7. Workshop (Multiblock — Steam age)
+
+The Workshop is the only way to craft machines and multiblocks. Available from Steam age; its blueprint library expands via milestones throughout all tiers.
+
+**Structure:** 3×3 multiblock — 1× Workshop Controller + 8× Workshop Frame tiles. All 9 tiles must form a contiguous 3×3 block. Controller detects the pattern on placement and activates.
+
+**Storage:** 54 internal slots in the Controller. Player loads resources manually or routes item pipes into it.
+
+**Crafting UI:** Opened by tapping the Controller. Shows all milestone-unlocked machine blueprints. Each entry displays the recipe cost and a Craft button. If resources are available in storage → tap Craft → instant output → machine placed in first empty hotbar slot, overflow to player inventory. If resources are missing → entry shows what is lacking (greyed/red).
+
+**Scope:** The Workshop crafts all machines (1×1) and all multiblock components (Casing + Controller tiles for Steel Boiler, future multiblocks). It does not produce consumable items (pipes, cables, plates) — those come from factory production lines.
+
+**Progression:** The Workshop itself is built from the Primitive Workbench as the player's first major construction goal. It replaces the Steam Workbench for all machine crafting. The Steam Workbench is demoted to item-only recipes (pipes, wires, components).
+
+---
+
+### 8. Player Inventory + Hotbar
+
+Machines, pipes, and cables live in the player's personal inventory — not the factory floor storage.
+
+**Hotbar:** 8 slots, always visible above the bottom toolbar. Tap a slot → selects that item type → tap a grid tile → places it. The selected slot stays active until the player switches or the slot empties.
+
+**Inventory:** Full grid (4 rows × 9 columns = 36 slots). Opened from the toolbar. Holds machines/pipes/cables not on the hotbar. Tap inventory slot → sends item to first empty hotbar slot (or swaps if hotbar is full).
+
+**Item flow:**
+- Workshop craft → first empty hotbar slot → overflow to inventory
+- Pick up a placed machine (long-press on machine tile, then confirm) → back to inventory
+- Deleting a machine tile (no pick-up) consumes it permanently
+
+**Toolbar (revised):** Milestones | Inventory | Inspect | Settings *(Build replaced by Inventory since hotbar handles placement)*
+
+---
+
+### 9. Touch UI
+- Tap empty tile → place selected hotbar item (if one is selected)
+- Tap machine → machine info panel
+- Tap pipe → color picker / flow info
 - Pinch to zoom, drag to pan
-- Bottom toolbar: Milestones | Build | Inspect | Settings
-- Tap-to-select + tap-to-place (no drag-and-drop)
+- Long-press machine → pick-up confirmation (returns machine to inventory)
+- Bottom toolbar: Milestones | Inventory | Inspect | Settings
 
 ### 8. Cosmetics
 - Machine skins, pipe style packs, floor tile themes, UI themes
@@ -138,7 +171,7 @@ Place Extractor on Node
 
 ### Phase 0 — Pre-Production
 - [ ] Recipe chain spreadsheet (LV + MV tiers minimum)
-- [ ] Research tree structure (node list, costs, unlock order)
+- [ ] Milestone tree structure (node list, unlock order)
 - [ ] All LV machine types defined (target: 5–8 machines)
 - [ ] Mobile UI wireframes
 - [ ] Art style guide (pixel palette, tile anatomy)
@@ -184,7 +217,7 @@ Place Extractor on Node
 ## Unity Technical Notes
 
 - **Tilemap**: Floor rendered via Tilemap. Machines/pipes are separate GameObjects managed by a `GridManager`.
-- **ScriptableObjects**: `MachineData`, `RecipeData`, `ResearchNodeData` — data-driven, easy to add content without code changes.
+- **ScriptableObjects**: `MachineData`, `RecipeData`, `MilestoneData` — data-driven, easy to add content without code changes.
 - **Pipe graph**: Adjacency graph per pipe network. BFS on item output to find valid destination.
 - **Save**: Custom `GridState` serialized to JSON. Stored at `Application.persistentDataPath`.
 - **Input**: Unity Input System with pointer abstraction for touch + mouse parity in editor.

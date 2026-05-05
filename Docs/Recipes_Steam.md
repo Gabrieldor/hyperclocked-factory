@@ -8,9 +8,9 @@ Fluid ingredient quantities are in mL (e.g. 500 mL Water, 250 mL Sulfuric Acid).
 
 **Steam capacity rules:**
 - Each steam machine has a **32 L internal buffer**
-- Boiler produces **8 L/s** (continuous while fueled + watered)
+- Boiler produces **16 L/s** (continuous while fueled + watered)
 - If a machine's buffer is full (idle or output blocked), it stops drawing steam
-- 1 Boiler (8 L/s) can sustain machines whose total draw ≤ 8 L/s
+- 1 Boiler (16 L/s) can sustain machines whose total draw ≤ 16 L/s
 
 ---
 
@@ -19,7 +19,7 @@ Fluid ingredient quantities are in mL (e.g. 500 mL Water, 250 mL Sulfuric Acid).
 | Category | Items |
 |---|---|
 | Raw nodes | Copper Ore, Tin Ore, Coal, Water *(fluid)* |
-| Post-expansion nodes | Iron Ore *(1st expansion)*, Sulfur Ore *(mid-Steam research unlock)* |
+| Post-expansion nodes | Iron Ore *(1st expansion)*, Sulfur Ore *(mid-Steam milestone B2)* |
 | Impure dusts | Impure Copper Dust, Impure Tin Dust, Impure Iron Dust, Impure Sulfur Dust *(Macerator output)* |
 | Pure dusts | Copper Dust, Tin Dust, Iron Dust, Bronze Dust, Coal Dust, Sulfur Dust |
 | Ingots | Copper Ingot, Tin Ingot, Iron Ingot, Bronze Ingot, Steel Ingot |
@@ -36,17 +36,18 @@ Fluid ingredient quantities are in mL (e.g. 500 mL Water, 250 mL Sulfuric Acid).
 
 | Machine | Power Source | L/s | Notes |
 |---|---|---|---|
-| Primitive Workbench | None (manual, instant) | 0 | Pre-placed; whitelist only; consumed on upgrade to Steam Workbench |
+| Primitive Workbench | None (manual, instant) | 0 | Pre-placed; crafts bootstrap items + Workshop parts only |
 | Primitive Furnace | Coal fuel slot (1 coal = 8s) | 0 | Pre-steam bootstrap; no steam needed |
-| Boiler | Coal fuel slot (1 coal = 8s) + Water | +8 | Generator; produces 8 L/s; 32 L output buffer |
+| Boiler | Coal fuel slot (1 coal = 8s) + Water | +16 | Generator; produces 16 L/s; 32 L output buffer |
+| Workshop | None (player UI) | 0 | Multiblock 3×3; crafts all machines and multiblock tiles instantly |
 | Alloy Smelter | Steam (32 L buffer) | 4 | Core Steam machine |
-| Steam Workbench | Steam (32 L buffer) | 2 | Upgraded crafting station |
-| Steam Macerator | Steam (32 L buffer) | 4 | Ore doubling; research unlock |
-| Steam Compressor | Steam (32 L buffer) | 2 | Makes plates; research unlock |
+| Steam Workbench | Steam (32 L buffer) | 2 | Item crafting only (pipes, wires, components) — not machines |
+| Steam Macerator | Steam (32 L buffer) | 4 | Ore doubling; milestone unlock (S2) |
+| Steam Compressor | Steam (32 L buffer) | 2 | Makes plates; milestone unlock (S2) |
 | Steam Extractor | Steam (32 L buffer) | 2 | Placed on node; continuous pull, not recipe-based |
 | Brick Furnace | Steam (32 L buffer) | 4 | Late Steam; only produces Steel; gates LV tier |
-| Chemical Reactor | Steam (32 L buffer) | 4 | Handles fluid+solid reactions; intro to chemistry; research unlock |
-| Steam Washer | Steam (32 L buffer) | 2 | Impure Dust + Water → Pure Dust + Stone; first machine with 2 output ports; research unlock |
+| Chemical Reactor | Steam (32 L buffer) | 4 | Handles fluid+solid reactions; intro to chemistry; milestone unlock (B1) |
+| Steam Washer | Steam (32 L buffer) | 2 | Impure Dust + Water → Pure Dust + Stone; first machine with 2 output ports; milestone unlock (A1) |
 
 ---
 
@@ -56,11 +57,37 @@ Not a recipe machine. Converts fuel + water into steam.
 
 - **Fuel slot:** 1 Coal = 8 seconds of operation
 - **Water input:** 1 water/t continuous (proximity or fluid pipe)
-- **Steam output:** 8 L/s continuous while fueled and watered; 32 L output buffer
+- **Steam output:** 16 L/s continuous while fueled and watered; 32 L output buffer
 - **Idle:** No coal or no water → output stops, no damage; buffer drains as machines consume
 
-> 1 Boiler (8 L/s) can sustain one 4 L/s machine + one Extractor (2 L/s) simultaneously.
-> Running two 4 L/s machines requires a second Boiler.
+> 1 Boiler (16 L/s) can sustain up to four 4 L/s machines simultaneously.
+> Running more than 16 L/s total draw requires a second Boiler.
+
+---
+
+## Workshop — Multiblock Specs
+
+The Workshop is the sole machine/multiblock crafter. Not a recipe machine — player opens the UI and selects blueprints.
+
+**Structure:** 3×3 (9 tiles) — 1× Workshop Controller + 8× Workshop Frame. All tiles must form a contiguous 3×3 block. Valid structure activates on Controller placement.
+
+**Storage:** 54 slots in the Controller. Loaded manually or via item pipes.
+
+**Output:** Crafted machine goes to player hotbar (first empty slot) → overflow to inventory. Instant — no processing time.
+
+**Blueprint library:** Starts with all Steam-age machines unlocked. Expands via milestones (LV machines unlock at LV tier transition, etc.).
+
+### Workshop Crafting Cost (via Primitive Workbench)
+
+| Item | Recipe | Qty needed |
+|---|---|---|
+| Workshop Frame | Bronze Ingot ×2 + Stone ×4 | 8× |
+| Workshop Controller | Bronze Plate ×8 + Iron Ingot ×8 | 1× |
+
+> Total: 16× Bronze Ingot, 32× Stone, 8× Bronze Plate, 8× Iron Ingot.
+> The Primitive Workbench is consumed when the Workshop is first activated — it is the player's primary build goal in early Steam age.
+
+Full machine crafting costs (Steam + LV blueprints, LV components, multiblock costs) are in `Docs/Machine_Crafting.md`.
 
 ---
 
@@ -70,7 +97,7 @@ Not a recipe machine. Placed on a resource node tile.
 
 - **Pull rate:** 1 ore per 4 ticks (base)
 - **Steam consumption:** 2 steam/t continuous while running
-- **Research upgrades:** ×2 rate, ×4 rate (defined in research tree)
+- **Milestone upgrades:** ×2 rate, ×4 rate (defined in `Docs/Milestones_Steam.md`)
 
 ---
 
@@ -78,18 +105,20 @@ Not a recipe machine. Placed on a resource node tile.
 
 ### Primitive Workbench (instant, no power)
 
+Bootstrap-only. Crafts the minimum needed to get the Workshop running. Consumed when the Workshop activates.
+
 | Tier | Machine | Input 1 | Qty | Input 2 | Qty | Output | Qty | Time (s) | L/s |
 |---|---|---|---|---|---|---|---|---|---|
 | Steam | Primitive Workbench | Copper Dust | 3 | Tin Dust | 1 | Bronze Dust | 4 | 0 | 0 |
-| Steam | Primitive Workbench | Stone | 8 | — | — | Primitive Furnace | 1 | 0 | 0 |
-| Steam | Primitive Workbench | Bronze Ingot | 4 | Stone | 4 | Boiler | 1 | 0 | 0 |
-| Steam | Primitive Workbench | Bronze Ingot | 6 | — | — | Alloy Smelter | 1 | 0 | 0 |
-| Steam | Primitive Workbench | Primitive Workbench | 1 | Bronze Ingot | 12 | Steam Workbench | 1 | 0 | 0 |
 | Steam | Primitive Workbench | Copper Ingot | 2 | — | — | Item Pipe | 4 | 0 | 0 |
 | Steam | Primitive Workbench | Stone | 8 | — | — | Stone Chest | 1 | 0 | 0 |
+| Steam | Primitive Workbench | Bronze Ingot | 2 | Stone | 4 | Workshop Frame | 1 | 0 | 0 |
+| Steam | Primitive Workbench | Bronze Plate | 8 | Iron Ingot | 8 | Workshop Controller | 1 | 0 | 0 |
 
+> Primitive Workbench no longer crafts machines — all machines are Workshop blueprints.
 > Item Pipe recipe requires Copper Ingot (needs Primitive Furnace first).
 > Starter Chest includes 4× Item Pipe so the very first pipe connection is not blocked.
+> The Primitive Workbench is consumed when the Workshop is placed and activates.
 
 ---
 
@@ -123,25 +152,19 @@ Not a recipe machine. Placed on a resource node tile.
 
 ### Steam Workbench (2 L/s)
 
+Item crafting only. Machine and multiblock crafting moved to the Workshop.
+
 | Tier | Machine | Input 1 | Qty | Input 2 | Qty | Output | Qty | Time (s) | L/s |
 |---|---|---|---|---|---|---|---|---|---|
 | Steam | Steam Workbench | Bronze Ingot | 4 | — | — | Fluid Pipe | 4 | 3 | 2 |
-| Steam | Steam Workbench | Bronze Ingot | 8 | Stone | 4 | Steam Macerator | 1 | 8 | 2 |
-| Steam | Steam Workbench | Bronze Ingot | 4 | Stone | 4 | Steam Compressor | 1 | 8 | 2 |
-| Steam | Steam Workbench | Bronze Ingot | 6 | — | — | Steam Extractor | 1 | 8 | 2 |
-| Steam | Steam Workbench | Iron Ingot | 16 | Stone | 64 | Brick Furnace | 1 | 10 | 2 |
-| Steam | Steam Workbench | Bronze Ingot | 8 | Fluid Pipe | 4 | Chemical Reactor | 1 | 10 | 2 |
-| Steam | Steam Workbench | Bronze Ingot | 16 | — | — | Steam Workbench | 1 | 10 | 2 |
-| Steam | Steam Workbench | Bronze Ingot | 6 | Fluid Pipe | 2 | Steam Washer | 1 | 8 | 2 |
 | Steam | Steam Workbench | Copper Ingot | 1 | — | — | Copper Wire | 4 | 3 | 2 |
 | Steam | Steam Workbench | Etched Copper Board | 1 | Copper Wire | 4 | Primitive Circuit | 1 | 8 | 2 |
 
-> Steam Workbench can replicate itself using only Bronze — no Primitive Workbench required.
-> Costs more than the original (16 Bronze vs 12 Bronze + consuming the Primitive Workbench) to keep the first upgrade meaningful.
+> Steam Workbench is demoted to item-only production. All machine recipes are now Workshop blueprints.
 
 ---
 
-### Steam Macerator (4 L/s) — research unlock
+### Steam Macerator (4 L/s) — milestone unlock (S2)
 
 | Tier | Machine | Input 1 | Qty | Input 2 | Qty | Output | Qty | Time (s) | L/s |
 |---|---|---|---|---|---|---|---|---|---|
@@ -153,22 +176,22 @@ Not a recipe machine. Placed on a resource node tile.
 
 > Ores produce **Impure Dust** — must be washed before smelting. Impure Dust cannot be smelted directly.
 > Coal is the exception: it outputs Coal Dust directly (fuel doesn't require purification).
-> Sulfur Ore node unlocked via mid-Steam research; required for the circuit chain.
+> Sulfur Ore node appears after milestone B2 (Build Chemical Reactor); required for the circuit chain.
 
 ---
 
-### Steam Compressor (2 L/s) — research unlock
+### Steam Compressor (2 L/s) — milestone unlock (S2)
 
 | Tier | Machine | Input 1 | Qty | Input 2 | Qty | Output | Qty | Time (s) | L/s |
 |---|---|---|---|---|---|---|---|---|---|
 | Steam | Steam Compressor | Bronze Ingot | 2 | — | — | Bronze Plate | 1 | 4 | 2 |
 | Steam | Steam Compressor | Iron Ingot | 2 | — | — | Iron Plate | 1 | 4 | 2 |
 
-> Plates are primarily used in LV machine crafting. Compressor is a late-Steam research unlock to prepare for the tier transition.
+> Plates are primarily used in LV machine crafting. Compressor unlocks at milestone S2 to prepare for the tier transition.
 
 ---
 
-### Steam Washer (2 L/s) — research unlock
+### Steam Washer (2 L/s) — milestone unlock (A1)
 
 Two output ports required: one for pure dust, one for Stone byproduct.
 
@@ -185,7 +208,7 @@ Two output ports required: one for pure dust, one for Stone byproduct.
 
 ---
 
-### Chemical Reactor (4 L/s) — research unlock
+### Chemical Reactor (4 L/s) — milestone unlock (B1)
 
 | Tier | Machine | Input 1 | Qty | Input 2 | Qty | Output | Qty | Time (s) | L/s |
 |---|---|---|---|---|---|---|---|---|---|
@@ -205,7 +228,7 @@ Two output ports required: one for pure dust, one for Stone byproduct.
 | Steam | Brick Furnace | Iron Ingot | 4 | Coal | 2 | Steel Ingot | 1 | 16 | 4 |
 
 > Slow by design. The cost is in building the Brick Furnace itself (16 Iron Ingot + 64 Stone).
-> Producing the first Steel Ingot triggers the LV unlock research node.
+> Producing the first Steel Ingot triggers milestone G1 (LV tier unlocked).
 
 ---
 

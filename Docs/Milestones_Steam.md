@@ -92,4 +92,4 @@ Unlocked by: **Build Steam Workbench (S2)**
 - Branch A and Branch B are independent — players can work both simultaneously after S2.
 - The LV gate is a hard AND: both Steel Ingot and Primitive Circuit must be produced.
 - Optional milestones (OPT) have no prerequisites and do not block progress.
-- RP counts marked TBD are tuned in playtesting.
+- Counts marked TBD are tuned in playtesting.

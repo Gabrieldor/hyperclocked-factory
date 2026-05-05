@@ -165,10 +165,11 @@ No currency. Unlocks trigger automatically the first time a gate item is produce
 
 ## 7. Mobile UI Wireframes
 
-- [ ] **Main Game Screen** — top bar (RP, tier, settings), center (factory grid), bottom toolbar (Build/Research/Inspect/Settings)
-- [ ] **Build Menu** — scrollable machine grid, unlock status, cancel button
+- [ ] **Main Game Screen** — top bar (tier, settings), center (factory grid), bottom toolbar (Milestones/Inventory/Inspect/Settings)
+- [ ] **Hotbar** — 8 slots above toolbar; tap slot to select item type, tap grid to place
+- [ ] **Inventory Screen** — 4×9 grid of machines/pipes/cables; tap slot → moves to hotbar
 - [ ] **Machine Info Panel** — name, tier, recipe, status, power, progress bar, Change Recipe, Remove
-- [ ] **Research Tree Screen** — full screen, scrollable/pannable, RP balance, node states (locked/available/unlocked)
+- [ ] **Milestone Tree Screen** — full screen, scrollable/pannable, node states (locked/available/unlocked)
 - [ ] **Settings Screen** — audio sliders, overvolt toggle, reset save
 
 ---
@@ -177,8 +178,8 @@ No currency. Unlocks trigger automatically the first time a gate item is produce
 
 ### 8a. Project Folder Structure
 - [ ] Create `Assets/` layout in Unity:
-  - `Scripts/` → Core/, Machines/, Research/, UI/, Data/, Save/
-  - `Data/` → Machines/, Recipes/, Research/ (SO assets)
+  - `Scripts/` → Core/, Machines/, Milestones/, UI/, Data/, Save/
+  - `Data/` → Machines/, Recipes/, Milestones/ (SO assets)
   - `Art/` → Tiles/, Machines/, Pipes/, Cables/, UI/, Fonts/, Palette/
   - `Scenes/` → Main.unity, Bootstrap.unity
   - `Prefabs/` → Machines/, Pipes/, UI/
@@ -193,7 +194,7 @@ No currency. Unlocks trigger automatically the first time a gate item is produce
 - [x] **MachineData** — machineName, tier (enum), tileSizeX/Y, steamPerTick/euPerTick, availableRecipes[], sprite *(no port offset arrays — ports are player-assigned per pipe connection at runtime)*
 - [x] **RecipeData** — inputs (ItemStack[]), outputs (ItemStack[]), processingTime, energyCost
 - [x] **MilestoneData** — milestoneName, triggerItem (ItemData ref) or triggerMachine (MachineData ref), unlockType (enum: Machine, Recipe, FloorExpansion, TierTransition), unlockTarget (SO ref), prerequisites[]
-- [x] **ItemData** — itemName, icon (Sprite), rpValuePerUnit
+- [x] **ItemData** — itemName, icon (Sprite), stackSize
 
 ### 8d. Key Design Decisions Before Phase 1 Code
 - [x] Steam uses separate fluid pipe layer → `CLAUDE.md`
@@ -202,7 +203,7 @@ No currency. Unlocks trigger automatically the first time a gate item is produce
 - [x] Pipes and cables are color-coded; segment only connects to same-color neighbors; machines accept any color → `CLAUDE.md`
 - [x] Item and fluid transport is time-based → `CLAUDE.md`
 - [x] 1 tick = 1 second → `CLAUDE.md`
-- [x] Single save slot; research unlocks are per-save → `CLAUDE.md`
+- [x] Single save slot; milestone state is per-save → `CLAUDE.md`
 
 ---
 

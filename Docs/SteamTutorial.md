@@ -178,7 +178,7 @@ After the tutorial, the player has:
 - An **Alloy Smelter** for automated Bronze production
 - A **Primitive Furnace** still on the floor (can keep or replace)
 - An empty (or nearly empty) Starter Chest
-- No ore extractor yet — the next free-play goal is unlocking and placing a **Steam Extractor** on a Copper or Tin node
+- No ore extractor yet — the next free-play goal is building and placing a **Steam Extractor** on a Copper or Tin node
 
 The Steam Workbench can craft additional Steam Workbenches using Bronze, allowing the player to scale crafting capacity.
 
@@ -209,7 +209,7 @@ Two distinct pipe types exist in the game. The tutorial establishes both:
 | Pre-fluid alternative | — | Proximity (1 tile from source) |
 | Visual | Dark metal pipe | Blue-tinted pipe with flow animation |
 
-**Fluid Pipe unlock recipe (Steam Workbench):**
+**Fluid Pipe recipe (Steam Workbench):**
 ```
 4× Bronze Ingot → 4× Fluid Pipe segments
 ```

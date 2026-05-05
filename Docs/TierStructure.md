@@ -48,13 +48,13 @@ Hyperclocked Factory has **4 tiers** for v1.0. Each tier unlocks when the player
 | Steam Compressor | Ingot → Plate | Consumes steam |
 | Brick Furnace | Iron + Coal Coke → Steel *(unlock trigger)* | No power — slow burn |
 
-> **Note:** The Brick Furnace is a special primitive machine. It requires no steam or electricity but is very slow. It exists solely as the bridge between Steam and LV tier. It is unlocked via the final Steam research node.
+> **Note:** The Brick Furnace is a special primitive machine. It requires no steam or electricity but is very slow. It exists solely as the bridge between Steam and LV tier. Blueprint becomes available at milestone A1.
 
 ### Recipe Depth
 **2–3 steps** — e.g. Ore → Dust → Alloy → Plate
 
 ### Tier Unlock Trigger
-Produce **1× Steel Ingot** in the Brick Furnace. This action unlocks the LV tier research branch.
+Produce **1× Steel Ingot** in the Brick Furnace. This action triggers milestone G1 and unlocks the LV tier.
 
 ---
 
@@ -97,7 +97,7 @@ Produce **1× Steel Ingot** in the Brick Furnace. This action unlocks the LV tie
 **3–5 steps** — e.g. Ore → Macerate → Dust → Smelt → Ingot → Compress → Plate → Assemble
 
 ### Tier Unlock Trigger
-Produce **1× Aluminium Ingot** in the LV Blast Furnace. This unlocks the MV tier research branch.
+Produce **1× Aluminium Ingot** in the LV Blast Furnace. This unlocks the MV tier.
 
 ---
 
@@ -143,7 +143,7 @@ Produce **1× Aluminium Ingot** in the LV Blast Furnace. This unlocks the MV tie
 **4–6 steps** — e.g. Chrome Ore → Macerate → Electrolyze → Dust → Alloy Smelter (with 3 other inputs) → Stainless Steel
 
 ### Tier Unlock Trigger
-Produce **1× Stainless Steel Ingot** in the MV Alloy Smelter. This unlocks the HV tier research branch.
+Produce **1× Stainless Steel Ingot** in the MV Alloy Smelter. This unlocks the HV tier.
 
 ---
 

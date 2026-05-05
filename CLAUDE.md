@@ -14,7 +14,7 @@ Mobile factory/automation game inspired by Nomifactory (GregTech). Unity 2D, pix
 | Engine | Unity 2D (URP 2D) |
 | Perspective | Top-down 2D, pixel art 32×32 px/tile |
 | Player | Pure builder / cursor — no walking avatar |
-| World | Fixed grid, 16×16 start → 64×64 max (research expansions) |
+| World | Fixed grid, 16×16 start → 64×64 max (milestone unlocks) |
 | Item transfer | Item pipes only — no conveyor belts |
 | Fluid transfer | Fluid pipes (separate layer) |
 | Power | W (Watts = V × A); LV 32V → MV 128V → HV 512V |
@@ -52,9 +52,11 @@ Victory: build and activate the **Applied Energistics Controller**.
 ## Steam Age (see `Docs/SteamTutorial.md`, `Docs/Recipes_Steam.md`)
 - Starter Chest: 32× Coal, 24× Copper Dust, 8× Tin Dust, 32× Stone, 4× Item Pipe
 - Water Node: pre-placed, immovable, infinite; 1-tile proximity = auto-draw
-- Boiler: 1 Coal/8s + Water → 8 L/s steam; 32 L buffer per machine; halts (no damage) when dry
+- Boiler: 1 Coal/8s + Water → 16 L/s steam; 32 L buffer per machine; halts (no damage) when dry
 - LV gate: Steel Ingot (Brick Furnace) + Primitive Circuit (Chemical Reactor chain)
 - Macerator → Impure Dust (except Coal → Coal Dust direct); Washer mandatory for ore doubling
+- **Workshop (multiblock 3×3):** sole machine/multiblock crafter; player's first major build goal; Primitive Workbench consumed on activation; blueprint library expands via milestones
+- **Player inventory:** Hotbar (8 slots, always visible) + Inventory (4×9 grid); Workshop output → hotbar → overflow inventory; long-press placed machine → pick up to inventory
 
 ---
 
@@ -63,7 +65,16 @@ Victory: build and activate the **Applied Energistics Controller**.
 - Clay → Electrolyzer → Na, Li, Al Dust, Si Dust + Tiny Pile of Ga (compact 9:1 via Compressor)
 - Lead Ore → Macerator → Impure Lead Dust + Mercury → Lead Dust + Arsenic Dust
 - Cinnabar Dust + O₂ → Mercury + SO₂; SO₂ + O₂ + H₂O → H₂SO₄ (2× yield vs Steam recipe)
-- Magnetizer machine: produces Magnetic Steel (separate item) for motors and components
+
+---
+
+## LV Machines (see `Docs/Recipes_LV.md`)
+- **Generators:** Steam Turbine (32W, 64 L/s steam), Solar Panel (8W, passive)
+- **Steel Boiler (multiblock):** 3×3 (Controller + 8 Casings); 288 L/s; same coal rate as Boiler
+- **Electric Furnace:** replaces Primitive Furnace; dust → ingot, 16W, 2s
+- **Electric Blast Furnace:** replaces Brick Furnace; Steel 4× faster (4s); also Boule production; 64W
+- **LV versions:** Macerator, Compressor, Extractor, Assembler, Alloy Smelter, Chemical Reactor, Ore Washer
+- **New machines:** Lathe (ingot → 2× rod), Wiremill (ingot → 8× wire, 2× yield), Electrolyzer, Magnetizer, Centrifuge
 
 ---
 
@@ -97,3 +108,5 @@ Victory: build and activate the **Applied Energistics Controller**.
 | Steam Tutorial | `Docs/SteamTutorial.md` |
 | Steam Recipes | `Docs/Recipes_Steam.md` |
 | Steam Milestones | `Docs/Milestones_Steam.md` |
+| LV Recipes | `Docs/Recipes_LV.md` |
+| Machine Crafting (Workshop blueprints) | `Docs/Machine_Crafting.md` |

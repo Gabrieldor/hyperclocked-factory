@@ -37,7 +37,7 @@ Some rare materials cannot be extracted directly as full dusts. They appear as *
 | Copper Ore | Start | Bronze chain; circuit chain (Copper Plate → Etched Board) |
 | Tin Ore | Start | Bronze chain |
 | Iron Ore | Build Brick Furnace | Steel gate; LV machine crafting |
-| Sulfur Ore | Mid-Steam research | Sulfuric Acid → circuit chain |
+| Sulfur Ore | Mid-Steam milestone (B2) | Sulfuric Acid → circuit chain |
 
 3 slots for 5 ore types — players choose which 3 to actively extract at any time. Swapping requires stopping an Extractor and redeploying it.
 
@@ -52,7 +52,7 @@ Some rare materials cannot be extracted directly as full dusts. They appear as *
 
 | Fluid | Source | Notes |
 |---|---|---|
-| Steam | Boiler (Coal + Water → 8 L/s) | Powers all steam machines via fluid pipe layer |
+| Steam | Boiler (Coal + Water → 16 L/s) | Powers all steam machines via fluid pipe layer |
 | Sulfuric Acid | Chemical Reactor (4× Sulfur Dust + 500 mL Water → 500 mL) | Etches Copper Boards for circuit chain |
 
 ---
