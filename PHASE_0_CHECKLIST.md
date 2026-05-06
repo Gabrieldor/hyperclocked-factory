@@ -76,24 +76,33 @@
 - [x] Define Transformer → passive 1×1; steps voltage one tier up or down → `Docs/Energy.md`
 - [x] Define Battery Buffer → 8 slots, voltage-locked, 1A per slot, charges + buffers → `Docs/Energy.md`
 - [x] Define battery tiers → Tier I: 8K Ws / Tier II: 16K Ws / Tier III: 32K Ws → `Docs/Energy.md`
-- [ ] Define the LV Generator machine: fuel type(s), V output, A output → TBD
+- [x] Define the LV Generator machine: fuel type(s), V output, A output → **Steam Turbine** (64 L/s steam → 32W, 1A @ 32V) + **Solar Panel** (passive → 8W, 0.25A @ 32V) → `Docs/Recipes_LV.md`
 
-### 3c. LV Tier Machines (target: 6–10 machines)
-- [ ] **LV Furnace** — Ore/Dust → Ingot (faster than Steam, runs on EU)
-- [ ] **LV Macerator** — Ore → 2x Dust
-- [ ] **LV Alloy Smelter** — 2x input → Alloy output
-- [ ] **LV Electrolyzer** — Compound → Elements (e.g. Water → Hydrogen + Oxygen)
-- [ ] **LV Assembler** — Multiple components → Assembled item (circuits, parts)
-- [ ] **LV Extractor** — Improved extractor for LV nodes (higher rate than Steam Extractor)
-- [ ] **LV Generator** — Fuel → EU/t (coal, charcoal, etc.)
-- [ ] *(Optional)* **LV Wiremill** — Ingot → Wire (needed for circuits)
-- [ ] *(Optional)* **LV Cutter** — Ingot → Plate (alternative to compressor)
-- For each machine: define function, EU/t, processing time, tile size (1×1), port directions
+### 3c. LV Tier Machines
+- [x] **LV Electric Furnace** — Dust → Ingot, 16W, 2s → `Docs/Recipes_LV.md`
+- [x] **LV Macerator** — Ore → 2× Dust, 16W → `Docs/Recipes_LV.md`
+- [x] **LV Compressor** — Ingot/Tiny Pile → Plate/Dust, 8W → `Docs/Recipes_LV.md`
+- [x] **LV Extractor** — Electric node extractor, 8W → `Docs/Recipes_LV.md`
+- [x] **LV Assembler** — Automated multi-input crafting, 8W; produces Motors/Pistons/Pumps/Circuits → `Docs/Recipes_LV.md`
+- [x] **LV Alloy Smelter** — 2 inputs → Alloy, 16W → `Docs/Recipes_LV.md`
+- [x] **LV Chemical Reactor** — Electric fluid+solid reactions, 16W → `Docs/Recipes_LV.md`
+- [x] **LV Ore Washer** — Impure Dust + Water → Pure Dust, 8W → `Docs/Recipes_LV.md`
+- [x] **Lathe** — Ingot → 2× Rod; Rod → 2× Ring, 16W → `Docs/Recipes_LV.md`
+- [x] **Wiremill** — Ingot → 8× Wire (2× yield over Assembler route), 16W → `Docs/Recipes_LV.md`
+- [x] **Electrolyzer** — Water splitting + Clay decomposition, 32W → `Docs/Recipes_LV.md`
+- [x] **Magnetizer** — Steel/Iron Ingot or Rod → Magnetic variant, 32W → `Docs/Recipes_LV.md`
+- [x] **Electric Blast Furnace** *(multiblock 3×3)* — Steel + Aluminium + GaAs Boule; casings in Invar; replaces Brick Furnace, 64W → `Docs/Recipes_LV.md`
+- [x] **Steam Turbine** — 64 L/s steam → 32W (1A @ 32V) → `Docs/Recipes_LV.md`
+- [x] **Solar Panel** — Passive → 8W (0.25A @ 32V) → `Docs/Recipes_LV.md`
+- [x] **Steel Boiler** *(multiblock 3×3)* — 288 L/s steam, same coal rate as Boiler → `Docs/Recipes_LV.md`
+- [x] For each machine: function, W, processing time defined → `Docs/Recipes_LV.md`; tile size 1×1 and port assignment → `CLAUDE.md`
 
 ### 3d. LV Tier Recipe Chains
-- [ ] **Steel chain**: Iron Ore → Dust (Macerator) → Ingot (Furnace) → Steel (LV Alloy Smelter + Carbon)
-- [ ] **Circuit chain**: Copper Wire (Wiremill) + Iron Plate (Cutter) + Redstone → Basic Circuit (Assembler)
-- [ ] Write all LV recipes (same format as Steam tier, in `Docs/Recipes_LV.md`)
+- [x] **Steel chain**: Iron Ore → Macerator → Impure Dust → Washer → Iron Dust → EBF (+ Coal Dust) → Steel Ingot → `Docs/Recipes_LV.md`
+- [x] **Aluminium chain**: Clay → Electrolyzer → Aluminium Dust → EBF → Aluminium Ingot (MV gate path) → `Docs/Recipes_LV.md`
+- [x] **Circuit chain**: Primitive Circuit = LV Circuit (current); Basic Circuit (TBD — Primitive ×2 + Gold Wire + Iron Plate) = more efficient LV Circuit → `Docs/Machine_Crafting.md`
+- [x] **Subcomponent chain**: Steel Rod → Magnetizer → Magnetic Steel Rod; Rod → Lathe → Steel Ring; Wiremill → Copper Wire → Assembler → Motor → Piston / Pump → `Docs/Machine_Crafting.md`
+- [x] Write all LV recipes → `Docs/Recipes_LV.md` *(Centrifuge recipes TBD pending chain finalization)*
 - [ ] Confirm every LV machine has at least 3 useful recipes
 
 ---
@@ -102,8 +111,7 @@
 
 - [x] Define format: Tier | Machine | Input 1 | Qty | Input 2 | Qty | Output | Qty | Time (s) | Steam/t or EU/t
 - [x] Steam tier: all recipes filled in → `Docs/Recipes_Steam.md`
-- [ ] LV tier: all recipes filled in → `Docs/Recipes_LV.md`
-- [ ] MV tier: at least 50% of recipes outlined
+- [x] LV tier: all recipes filled in → `Docs/Recipes_LV.md` *(Centrifuge TBD)*
 - [ ] Verify no recipe is a dead end (every output is used somewhere)
 - [x] Identify the "critical path" — Bronze path + LV gate path → `Docs/Recipes_Steam.md`
 - [ ] Identify 3 items that require the widest machine variety to produce (tier goal markers)
@@ -115,22 +123,22 @@
 No currency. Unlocks trigger automatically the first time a gate item is produced or a gate machine is built.
 
 ### 5a. Structure
-- [ ] Decide tree layout: linear chain per tier OR branching tree with parallel tracks
-- [ ] Define starting state: what is available at floor generation with zero milestones hit?
-- [ ] Define floor expansion triggers: what item/machine unlocks each floor size step?
+- [x] Decide tree layout: **linear trunk + parallel branches per tier**, same pattern for Steam and LV → `Docs/Milestones_Steam.md`, `Docs/Milestones_LV.md`
+- [x] Define starting state: S0 free-starts Primitive Workbench, Furnace, Boiler, Extractor → `Docs/Milestones_Steam.md`
+- [x] Define floor expansion triggers: Steam gate 32×32; L2 40×40; B4 44×44; MV gate 48×48; HV 64×64 → `Docs/Milestones_LV.md`
 
 ### 5b. Steam Milestones
 - [x] Steam milestone tree written → `Docs/Milestones_Steam.md`
 - [ ] Fill in OPT1 Bronze Ingot count threshold (tune in playtesting)
 
 ### 5c. LV Milestones
-- [ ] Write LV milestone tree → `Docs/Milestones_LV.md`
-- [ ] Define which LV milestone unlocks the next floor expansion (toward 64×64)
+- [x] Write LV milestone tree → `Docs/Milestones_LV.md`
+- [x] Define which LV milestone unlocks the next floor expansion → L2 (40×40), B4 (44×44), G4/MV gate (48×48) → `Docs/Milestones_LV.md`
 
 ### 5d. Tree Diagram
 - [x] Steam tree diagram included in `Docs/Milestones_Steam.md`
-- [ ] LV+ tree diagram → `Docs/Milestones_LV.md`
-- [ ] Ensure no milestone is orphaned — every node has a visible path from start
+- [x] LV tree diagram included in `Docs/Milestones_LV.md`
+- [x] No milestone is orphaned — every node traces back to L0/G1
 
 ---
 
@@ -216,11 +224,10 @@ No currency. Unlocks trigger automatically the first time a gate item is produce
 | Resources doc | `Docs/Resources.md` | [x] |
 | Steam tier machine list | `Docs/Recipes_Steam.md` | [x] |
 | Steam tier recipes | `Docs/Recipes_Steam.md` | [x] |
-| LV tier machine list | `Docs/Recipes_LV.md` | [ ] |
-| LV tier recipes | `Docs/Recipes_LV.md` | [ ] |
-| MV+ recipes (50%) | `Docs/Recipes_MV.md` | [ ] |
+| LV tier machine list | `Docs/Recipes_LV.md` | [x] |
+| LV tier recipes | `Docs/Recipes_LV.md` | [x] |
 | Steam milestone tree | `Docs/Milestones_Steam.md` | [x] |
-| LV milestone tree | `Docs/Milestones_LV.md` | [ ] |
+| LV milestone tree | `Docs/Milestones_LV.md` | [x] |
 | Art style guide | `Docs/ArtGuide.md` | [ ] |
 | DB32 palette swatches | `Art/Palette/` | [ ] |
 | Pixel font files | `Art/Fonts/` | [ ] |

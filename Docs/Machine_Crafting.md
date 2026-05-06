@@ -60,56 +60,76 @@ All costs are Workshop inputs (drawn from internal storage). Materials: Bronze I
 
 Intermediate items produced in factory machines (not Workshop). Required as ingredients in LV machine blueprints.
 
-| Component | Machine | Input 1 | Qty | Input 2 | Qty | Input 3 | Qty | Output Qty |
-|---|---|---|---|---|---|---|---|---|
-| LV Motor | LV Assembler | Iron Plate | 2 | Copper Wire | 4 | Magnetic Steel Ingot | 1 | 1 |
-| Basic Circuit | LV Assembler | Primitive Circuit | 2 | Gold Wire | 4 | Iron Plate | 1 | 1 |
-| Steel Plate | LV Compressor | Steel Ingot | 2 | — | — | — | — | 1 |
+| Component | Machine | Input 1 | Qty | Input 2 | Qty | Input 3 | Qty | Input 4 | Qty | Out |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Steel Ring | Lathe | Steel Rod | 1 | — | — | — | — | — | — | 2 |
+| Magnetic Steel Rod | Magnetizer | Steel Rod | 1 | — | — | — | — | — | — | 1 |
+| LV Motor | LV Assembler | Magnetic Steel Rod | 2 | Steel Rod | 2 | Copper Wire | 4 | Steel Ring | 2 | 1 |
+| LV Piston | LV Assembler | LV Motor | 1 | Steel Plate | 2 | Steel Rod | 2 | Steel Ingot | 4 | 1 |
+| LV Pump | LV Assembler | LV Motor | 1 | Steel Ring | 2 | Bronze Plate | 1 | Fluid Pipe | 2 | 1 |
+| Basic Circuit | LV Assembler | Primitive Circuit | 2 | Gold Wire | 4 | Iron Plate | 1 | — | — | 1 |
+| MV Circuit | LV Assembler | Basic Circuit | 2 | Gold Wire | 8 | Nickel Plate | 2 | Silicon Dust | 4 | 1 |
+| Steel Plate | LV Compressor | Steel Ingot | 2 | — | — | — | — | — | — | 1 |
 
-> **LV Motor chain:** Iron Ore → Macerator → Washer → Furnace → Iron Plate (Compressor); Steel Ingot → Magnetizer → Magnetic Steel Ingot; Copper Ingot → Wiremill → Copper Wire.
-> **Basic Circuit chain:** Primitive Circuit ×2 (Steam age); Gold Ore → Macerator → Washer → Furnace → Gold Ingot → Wiremill → Gold Wire ×8; Iron Plate from Compressor.
+> **Circuit tiers (all crafted at LV):** Primitive Circuit (Steam age, current LV Circuit) → Basic Circuit (LV Assembler, more efficient LV Circuit) → MV Circuit (LV Assembler, expensive; required to build EBF controller ×3).
+> **LV Circuit slot:** machine blueprints accept Primitive Circuit or Basic Circuit interchangeably. MV Circuit is a separate, higher tier used only in EBF and future MV machine blueprints.
+> **Motor chain:** Steel Ingot → Lathe → Steel Rod; Rod → Magnetizer → Magnetic Steel Rod; Rod → Lathe → Steel Ring ×2; Copper Ingot → Wiremill → Copper Wire.
+> **Piston chain:** LV Motor + Steel Ingot → Compressor → Steel Plate; Lathe → Steel Rod.
+> **Pump chain:** LV Motor + Fluid Pipe (Bronze Ingot ×4 → Workbench → 4) + Bronze Ingot → Compressor → Bronze Plate.
 
 ---
 
 ### LV Machine Blueprints
 
-Materials: Steel Ingot, Iron Plate, Copper Wire, LV Motor, Basic Circuit, Fluid Pipe, Steel Rod.
+Materials: Steel Ingot, Iron Plate, Copper Wire, LV Motor, LV Piston, LV Pump, LV Circuit (Primitive Circuit now; Basic Circuit TBD), Fluid Pipe, Steel Rod.
 
-| Machine | Steel Ingot | Iron Plate | Copper Wire | LV Motor | Basic Circuit | Other |
-|---|---|---|---|---|---|---|
-| LV Electric Furnace | 4 | 2 | 4 | — | — | — |
-| LV Macerator | 4 | 2 | 4 | 1 | — | — |
-| LV Compressor | 4 | 2 | — | 1 | — | — |
-| LV Extractor | 4 | 2 | 4 | 1 | — | — |
-| LV Assembler | 4 | 4 | 4 | 1 | 1 | — |
-| LV Alloy Smelter | 4 | 2 | 4 | — | — | — |
-| LV Chemical Reactor | 4 | 4 | — | — | 1 | Fluid Pipe ×8 |
-| LV Ore Washer | 4 | 2 | — | 1 | — | Fluid Pipe ×4 |
-| Lathe | 4 | 2 | — | 1 | — | Steel Rod ×4 |
-| Wiremill | 4 | 2 | 4 | 1 | — | — |
-| Electrolyzer | 4 | 4 | 8 | — | 1 | — |
-| Magnetizer | 4 | 2 | 8 | — | — | — |
-| Electric Blast Furnace | 8 | 4 | 8 | — | 1 | — |
-| Centrifuge | 4 | 4 | — | 1 | — | Steel Rod ×4 |
-| Steam Turbine | 4 | 4 | — | — | — | Fluid Pipe ×8 |
-| Solar Panel | — | 2 | 4 | — | — | Silicon Boule ×1 |
+| Machine | Steel Ingot | Iron Plate | Cu Wire | Motor | Piston | Pump | Circuit | Other |
+|---|---|---|---|---|---|---|---|---|
+| LV Electric Furnace | 4 | 2 | 4 | — | — | — | 1 | — |
+| LV Macerator | 4 | 2 | — | 1 | — | — | 1 | — |
+| LV Compressor | 4 | 2 | — | — | 1 | — | 1 | — |
+| LV Extractor | 4 | 2 | 4 | 1 | — | — | 1 | — |
+| LV Assembler | 4 | 4 | 4 | 1 | 1 | — | 2 | — |
+| LV Alloy Smelter | 4 | 2 | 4 | — | — | — | 1 | — |
+| LV Chemical Reactor | 4 | 2 | — | — | — | 1 | 2 | Fluid Pipe ×8 |
+| LV Ore Washer | 4 | 2 | — | — | — | 1 | 1 | Fluid Pipe ×4 |
+| Lathe | 4 | 2 | — | 1 | — | — | 1 | Steel Rod ×4 |
+| Wiremill | 4 | 2 | 4 | 1 | — | — | 1 | — |
+| Electrolyzer | 4 | 4 | 8 | — | — | 1 | 2 | — |
+| Magnetizer | 4 | 2 | 8 | — | — | — | 1 | — |
+| Electric Blast Furnace *(Controller)* | 8 | 4 | 8 | — | 2 | — | 3× MV Circuit | Steel Rod ×4 |
+| Steam Turbine | 4 | 4 | — | 1 | — | — | 1 | Fluid Pipe ×8 |
+| Solar Panel | — | 2 | 4 | — | — | — | 1 | *(TBD — Silicon source pending)* |
 
-> **Steel Rod:** Steel Ingot → Lathe → Steel Rod ×2. Lathe must be built before machines that require Steel Rod as an ingredient.
-> **Solar Panel** is mid-to-late LV: Silicon Boule requires Clay → Electrolyzer → Silicon Dust → Electric Blast Furnace → Silicon Boule (60s batch).
-> **Steam Turbine** is early LV — relatively cheap to bridge Steam infrastructure into the LV power network.
+> **Motor** drives rotating/grinding mechanisms. **Piston** handles compression/linear motion. **Pump** handles fluid-touching machines.
+> **Electric Blast Furnace** is a multiblock (3×3): Controller + 8× EBF Casing. Controller cost listed above; see Multiblock section for casing recipe.
+> **EBF Controller** requires 3× MV Circuit — crafted at LV in the Assembler (Basic Circuit ×2 + Gold Wire ×8 + Nickel Plate ×2 + Silicon Dust ×4). Expensive by design; gates the Aluminium → MV path.
+> **Steel Rod:** Steel Ingot → Lathe → Steel Rod ×2. Lathe must be built before machines that require Steel Rod as a blueprint ingredient.
+> **Steam Turbine** is early LV — cheapest way to bridge Steam infrastructure into the LV power network.
 
 ---
 
 ### LV Multiblock Components
 
-| Component | Steel Plate | Steel Ingot | Iron Ingot | Basic Circuit | Fluid Pipe | Qty needed |
+#### Steel Boiler
+
+| Component | Steel Plate | Steel Ingot | Iron Ingot | LV Circuit | Fluid Pipe | Qty needed |
 |---|---|---|---|---|---|---|
 | Steel Boiler Casing | 4 | — | 2 | — | — | 8 |
 | Steel Boiler Controller | 8 | — | — | 1 | 4 | 1 |
 
-**Full Steel Boiler total:** 32× Steel Plate, 16× Iron Ingot, 1× Basic Circuit, 4× Fluid Pipe.
+**Full Steel Boiler total:** 32× Steel Plate, 16× Iron Ingot, 1× LV Circuit, 4× Fluid Pipe.
 
-> Steel Plate: Steel Ingot ×2 → LV Compressor → Steel Plate ×1.
+#### Electric Blast Furnace
+
+| Component | Invar Plate | Steel Ingot | LV Circuit | Qty needed |
+|---|---|---|---|---|
+| EBF Casing | 4 | 2 | — | 8 |
+| EBF Controller | — | — | — | 1 *(see machine blueprints above)* |
+
+**Full EBF total (casings only):** 32× Invar Plate, 16× Steel Ingot — plus the Controller cost.
+
+> **Invar chain:** Iron Dust ×4 + Nickel Dust ×1 → LV Alloy Smelter → Invar Dust ×5 → LV Electric Furnace → Invar Ingot → LV Compressor → Invar Plate (×2 ingots per plate). Invar is available before the EBF — no circular dependency.
 
 ---
 
@@ -127,8 +147,17 @@ Materials: Steel Ingot, Iron Plate, Copper Wire, LV Motor, Basic Circuit, Fluid 
 | Copper Wire | Wiremill (Copper Ingot ×1 → 8) or Steam Workbench / Assembler (×4) |
 | Gold Wire | Wiremill (Gold Ingot ×1 → 8) |
 | Magnetic Steel Ingot | Magnetizer (Steel Ingot ×1 → 1) |
-| LV Motor | LV Assembler (see LV Components above) |
-| Basic Circuit | LV Assembler (see LV Components above) |
-| Primitive Circuit | Steam Workbench (Etched Copper Board + Copper Wire) |
+| Magnetic Steel Rod | Magnetizer (Steel Rod ×1 → 1) |
+| Steel Ring | Lathe (Steel Rod ×1 → Steel Ring ×2) |
+| LV Motor | LV Assembler (Magnetic Steel Rod ×2 + Steel Rod ×2 + Copper Wire ×4 + Steel Ring ×2) |
+| LV Piston | LV Assembler (LV Motor ×1 + Steel Plate ×2 + Steel Rod ×2 + Steel Ingot ×4) |
+| LV Pump | LV Assembler (LV Motor ×1 + Steel Ring ×2 + Bronze Plate ×1 + Fluid Pipe ×2) |
+| Invar Dust | LV Alloy Smelter (Iron Dust ×4 + Nickel Dust ×1 → Invar Dust ×5) |
+| Invar Ingot | LV Electric Furnace (Invar Dust ×1 → 1) |
+| Invar Plate | LV Compressor (Invar Ingot ×2 → 1) — used in EBF Casing ×4 per casing |
+| GaAs Boule | Electric Blast Furnace (Gallium Dust ×16 + Arsenic Dust ×16, 60s) |
+| Primitive Circuit | Steam Workbench (Etched Copper Board + Copper Wire) — LV Circuit tier 1 |
+| Basic Circuit | LV Assembler: Primitive Circuit ×2 + Gold Wire ×4 + Iron Plate → 1×; or GaAs Boule ×1 + Gold Wire ×8 + Iron Plate ×2 → 3× (post-EBF) |
+| MV Circuit | LV Assembler (Basic Circuit ×2 + Gold Wire ×8 + Nickel Plate ×2 + Silicon Dust ×4) — required for EBF controller ×3 |
 | Silicon Boule | Electric Blast Furnace (Silicon Dust ×64, 60s) |
 | Fluid Pipe | Steam Workbench (Bronze Ingot ×4 → 4) |
