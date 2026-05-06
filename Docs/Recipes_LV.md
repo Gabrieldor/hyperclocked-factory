@@ -189,6 +189,20 @@ Intermediate parts required for machine blueprints (Workshop). All assembled her
 > **Basic Circuit (GaAs batch):** GaAs Boule ×1 + Gold Wire ×8 + Iron Plate ×2 → 3× Basic Circuit. Post-EBF efficiency upgrade — GaAs Boule is produced in the EBF (Gallium Dust ×16 + Arsenic Dust ×16, 60s).
 > **MV Circuit chain:** Basic Circuit ×2 + Gold Wire ×8 + Nickel Plate ×2 + Silicon Dust ×4. Requires Electrolyzer (Silicon Dust) + Nickel ore chain + Wiremill at scale. 3× MV Circuit required to build the EBF controller.
 
+#### Batteries
+
+| Output | Qty | Input 1 | Qty | Input 2 | Qty | Time (s) |
+|---|---|---|---|---|---|---|
+| Battery Hull | 1 | Lead Plate | 2 | Iron Plate | 1 | 8 |
+| Tier I Battery | 1 | Battery Hull | 1 | Sulfur Dust | 4 | 6 |
+| Tier II Battery | 1 | Battery Hull | 1 | Sodium Dust | 4 | 6 |
+| Tier III Battery | 1 | Battery Hull | 1 | Lithium Dust | 4 | 6 |
+
+> **Battery Hull chain:** Lead Ore → Macerator → Impure Lead Dust → Chemical Reactor (+ Mercury) → Lead Dust → Furnace → Lead Ingot → Compressor → Lead Plate ×2 + Iron Plate → Assembler → Battery Hull.
+> **Tier I:** Sulfur Dust (Steam-era Chemical Reactor byproduct or node). Matches 8K Ws capacity.
+> **Tier II:** Sodium Dust from Clay Electrolyzer. Matches 16K Ws capacity.
+> **Tier III:** Lithium Dust from Clay Electrolyzer. Matches 32K Ws capacity.
+
 > Unlike the Steam Workbench, the Assembler runs fully unattended — pipe items in, receive output via pipe.
 
 ---

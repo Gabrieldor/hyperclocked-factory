@@ -103,7 +103,7 @@
 - [x] **Circuit chain**: Primitive Circuit = LV Circuit (current); Basic Circuit (TBD — Primitive ×2 + Gold Wire + Iron Plate) = more efficient LV Circuit → `Docs/Machine_Crafting.md`
 - [x] **Subcomponent chain**: Steel Rod → Magnetizer → Magnetic Steel Rod; Rod → Lathe → Steel Ring; Wiremill → Copper Wire → Assembler → Motor → Piston / Pump → `Docs/Machine_Crafting.md`
 - [x] Write all LV recipes → `Docs/Recipes_LV.md` *(Centrifuge recipes TBD pending chain finalization)*
-- [ ] Confirm every LV machine has at least 3 useful recipes
+- [x] Confirm every LV machine has at least 3 useful recipes
 
 ---
 
@@ -112,9 +112,9 @@
 - [x] Define format: Tier | Machine | Input 1 | Qty | Input 2 | Qty | Output | Qty | Time (s) | Steam/t or EU/t
 - [x] Steam tier: all recipes filled in → `Docs/Recipes_Steam.md`
 - [x] LV tier: all recipes filled in → `Docs/Recipes_LV.md` *(Centrifuge TBD)*
-- [ ] Verify no recipe is a dead end (every output is used somewhere)
+- [x] Verify no recipe is a dead end (every output is used somewhere) *(Gold/Copper/Tin/Bronze rods, rings, Magnetic Iron Rod, Hydrogen reserved for MV+)*
 - [x] Identify the "critical path" — Bronze path + LV gate path → `Docs/Recipes_Steam.md`
-- [ ] Identify 3 items that require the widest machine variety to produce (tier goal markers)
+- [x] Identify 3 items that require the widest machine variety to produce: **EBF Controller** (12+ machines), **LV Motor** (7 machines), **MV Circuit** (4+ machines)
 
 ---
 

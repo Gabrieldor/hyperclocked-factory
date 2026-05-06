@@ -69,6 +69,7 @@ Intermediate items produced in factory machines (not Workshop). Required as ingr
 | LV Pump | LV Assembler | LV Motor | 1 | Steel Ring | 2 | Bronze Plate | 1 | Fluid Pipe | 2 | 1 |
 | Basic Circuit | LV Assembler | Primitive Circuit | 2 | Gold Wire | 4 | Iron Plate | 1 | — | — | 1 |
 | MV Circuit | LV Assembler | Basic Circuit | 2 | Gold Wire | 8 | Nickel Plate | 2 | Silicon Dust | 4 | 1 |
+| Battery Hull | LV Assembler | Lead Plate | 2 | Iron Plate | 1 | — | — | — | — | 1 |
 | Steel Plate | LV Compressor | Steel Ingot | 2 | — | — | — | — | — | — | 1 |
 
 > **Circuit tiers (all crafted at LV):** Primitive Circuit (Steam age, current LV Circuit) → Basic Circuit (LV Assembler, more efficient LV Circuit) → MV Circuit (LV Assembler, expensive; required to build EBF controller ×3).
@@ -159,5 +160,8 @@ Materials: Steel Ingot, Iron Plate, Copper Wire, LV Motor, LV Piston, LV Pump, L
 | Primitive Circuit | Steam Workbench (Etched Copper Board + Copper Wire) — LV Circuit tier 1 |
 | Basic Circuit | LV Assembler: Primitive Circuit ×2 + Gold Wire ×4 + Iron Plate → 1×; or GaAs Boule ×1 + Gold Wire ×8 + Iron Plate ×2 → 3× (post-EBF) |
 | MV Circuit | LV Assembler (Basic Circuit ×2 + Gold Wire ×8 + Nickel Plate ×2 + Silicon Dust ×4) — required for EBF controller ×3 |
-| Silicon Boule | Electric Blast Furnace (Silicon Dust ×64, 60s) |
+| Battery Hull | LV Assembler (Lead Plate ×2 + Iron Plate ×1) |
+| Tier I Battery | LV Assembler (Battery Hull ×1 + Sulfur Dust ×4) — 8K Ws |
+| Tier II Battery | LV Assembler (Battery Hull ×1 + Sodium Dust ×4) — 16K Ws |
+| Tier III Battery | LV Assembler (Battery Hull ×1 + Lithium Dust ×4) — 32K Ws |
 | Fluid Pipe | Steam Workbench (Bronze Ingot ×4 → 4) |
