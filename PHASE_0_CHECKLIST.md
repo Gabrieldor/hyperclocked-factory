@@ -145,29 +145,28 @@ No currency. Unlocks trigger automatically the first time a gate item is produce
 ## 6. Art Style Guide
 
 ### 6a. Palette
-- [ ] Select palette — **recommended: DB32 (DawnBringer 32)** — 32 colors, warm industrial tones
-  - Alternative: Endesga 32 (brighter, more modern)
+- [x] Select palette — **DB32 (DawnBringer 32)** → `Docs/ArtGuide.md`
 - [ ] Download palette `.png` and `.ase` (Aseprite swatch) → `Art/Palette/`
-- [ ] Assign palette roles: dark gray = casings, copper/orange = pipes, yellow-green = active, red = error, blue = fluid pipes
+- [x] Assign palette roles → `Docs/ArtGuide.md` §Palette
 
 ### 6b. Tile Anatomy (32×32 px)
-- [ ] Machine tile: 4px casing border, 16×16 center icon, 4×4 status light corner, input/output port arrows
-- [ ] Pipe tile variants — 16 combinations (4-directional bitmask): straights, corners, T-junctions, cross, caps
-- [ ] Floor tile (plain + subtle grid line variant)
-- [ ] Node slot tile (inactive: faint ore outline; active with Extractor: glowing)
-- [ ] Cable tile variants (same 16 bitmask as pipes, different color)
+- [x] Machine tile: 4px casing border, 16×16 center icon, 4×4 status light corner, port arrows → `Docs/ArtGuide.md`
+- [x] Pipe tile variants — 16 combinations (4-directional bitmask) → `Docs/ArtGuide.md`
+- [x] Floor tile (plain + grid line variant) → `Docs/ArtGuide.md`
+- [x] Node slot tile (inactive + active/extracting) → `Docs/ArtGuide.md`
+- [x] Cable tile variants (same 16 bitmask, thinner channel) → `Docs/ArtGuide.md`
 
 ### 6c. Animation
-- [ ] Machine idle: static OR 2-frame pulse
-- [ ] Machine active: 4–6 frame loop (spinning gear, pulsing light)
-- [ ] Pipe item transit: none (items invisible — GT style)
-- [ ] Node extraction: 2-frame pulse on Extractor
+- [x] Machine idle: static or 2-frame light pulse → `Docs/ArtGuide.md`
+- [x] Machine active: 4–6 frame loop per machine type → `Docs/ArtGuide.md`
+- [x] Pipe item transit: none (items invisible — GT style) → `Docs/ArtGuide.md`
+- [x] Node extraction: 2-frame pulse → `Docs/ArtGuide.md`
 
 ### 6d. UI Style
-- [ ] Select pixel font — recommended: **m5x7** or **04b_03** → `Art/Fonts/`
-- [ ] UI panel style: dark background + 1px light border
-- [ ] Button style: 3-state (normal, pressed, disabled)
-- [ ] Build menu icon size: 24×24 px
+- [x] Pixel font: **m5x7** → `Docs/ArtGuide.md`; download → `Art/Fonts/`
+- [x] UI panel style: dark background + 1px border → `Docs/ArtGuide.md`
+- [x] Button style: 3-state (normal, pressed, disabled) → `Docs/ArtGuide.md`
+- [x] Build menu icon size: 24×24 px → `Docs/ArtGuide.md`
 
 ---
 
@@ -228,7 +227,7 @@ No currency. Unlocks trigger automatically the first time a gate item is produce
 | LV tier recipes | `Docs/Recipes_LV.md` | [x] |
 | Steam milestone tree | `Docs/Milestones_Steam.md` | [x] |
 | LV milestone tree | `Docs/Milestones_LV.md` | [x] |
-| Art style guide | `Docs/ArtGuide.md` | [ ] |
+| Art style guide | `Docs/ArtGuide.md` | [x] |
 | DB32 palette swatches | `Art/Palette/` | [ ] |
 | Pixel font files | `Art/Fonts/` | [ ] |
 | Mobile UI wireframes | `Wireframes/` (images or Figma link) | [ ] |

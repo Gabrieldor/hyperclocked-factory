@@ -79,7 +79,7 @@ Victory: build and activate the **Applied Energistics Controller**.
 ---
 
 ## Architecture Guidelines
-- Floor: Unity Tilemap. Machines/pipes: GameObjects via `GridManager`. All data in ScriptableObjects — no hardcoded content.
+- Floor: Unity Tilemap with Random Tile, 2 asymmetric variants, rotation enabled (yields 8 apparent variants). Machines/pipes: GameObjects via `GridManager`. All data in ScriptableObjects — no hardcoded content.
 - Item pipes: adjacency graph, BFS. Port assignment: player-assigned per pipe at runtime, stored in `GridState`. No port arrays in `MachineData`.
 - Color coding: segment connects only to same-color neighbors; machines accept any color.
 - Save: single slot, `GridState` → JSON at `Application.persistentDataPath`. Input: Unity Input System (touch + mouse parity).
@@ -110,3 +110,4 @@ Victory: build and activate the **Applied Energistics Controller**.
 | Steam Milestones | `Docs/Milestones_Steam.md` |
 | LV Recipes | `Docs/Recipes_LV.md` |
 | Machine Crafting (Workshop blueprints) | `Docs/Machine_Crafting.md` |
+| Sprite Specs (per-machine frame counts) | `Docs/SpriteSpecs.md` |
