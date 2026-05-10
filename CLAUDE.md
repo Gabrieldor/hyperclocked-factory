@@ -4,6 +4,12 @@
 ## Project
 Mobile factory/automation game inspired by Nomifactory (GregTech). Unity 2D, pixel art. See `GDD.md` for full GDD and `Docs/` for design docs.
 
+## Rule — Technical Documentation
+**Every time Unity work is done** (new script, prefab, SO, scene change, editor tool), update `Docs/Technical.md` before the task is considered complete. The doc must reflect the current state of: script responsibilities, public API, inspector fields, wiring, and scene hierarchy. No exceptions.
+
+## Rule — UI Validation
+**Every time Canvas UI is created or modified**, run the UI Integrity Validator (in `unity-hierarchy-editor` skill, Phase 3 Step 4) in play mode before reporting done. It must return PASS with zero issues. The user must never be the one to discover broken UI — out-of-bounds elements, overflowing/clipped text, invisible slots, or layout misconfigurations are your responsibility to catch.
+
 ---
 
 ## Confirmed Design Decisions
@@ -87,8 +93,8 @@ Victory: build and activate the **Applied Energistics Controller**.
 ---
 
 ## Development Phases
-- **Phase 0** — Pre-production ← *current*. See `PHASE_0_CHECKLIST.md`
-- **Phase 1** — Core prototype: grid, item pipes, Workbench + Furnace, milestone tracker UI
+- **Phase 0** — Pre-production ✓. See `PHASE_0_CHECKLIST.md`
+- **Phase 1** — Core prototype ← *current*. See `PHASE_1_CHECKLIST.md`. Grid, item pipes, Extractor + Furnace, milestone tracker UI
 - **Phase 2** — Fluid pipes, power/cables, milestone tree UI, all Steam+LV content, save/load
 - **Phase 3** — MV + HV content, Applied Energistics system
 - **Phase 4** — Polish: art, audio, particles, tutorial flow, Android profiling
@@ -102,6 +108,8 @@ Victory: build and activate the **Applied Energistics Controller**.
 |---|---|
 | Game Design Document | `GDD.md` |
 | Phase 0 Checklist | `PHASE_0_CHECKLIST.md` |
+| Phase 1 Checklist | `PHASE_1_CHECKLIST.md` |
+| Technical Reference | `Docs/Technical.md` |
 | Energy System | `Docs/Energy.md` |
 | Resources | `Docs/Resources.md` |
 | Tier Structure | `Docs/TierStructure.md` |

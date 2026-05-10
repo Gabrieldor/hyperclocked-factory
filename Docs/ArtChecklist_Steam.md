@@ -5,6 +5,14 @@ Machine sprite sheet row order: **0=idle · 1=halted · 2=selected · 3+=active 
 
 ---
 
+## Environment / World
+
+| Asset | Notes | Done |
+|---|---|---|
+| Out-of-bounds area art | Visible beyond the 16×16 grid edge when panning freely. Dark/void treatment or decorative border. No gameplay function. | [ ] |
+
+---
+
 ## Machines — `machines_steam.png`
 
 One row per machine. Tick each state individually.
