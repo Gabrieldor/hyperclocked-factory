@@ -10,7 +10,8 @@ public class GridManager : MonoBehaviour
     public static GridManager Instance { get; private set; }
     public static event System.Action<PlacedMachine> OnMachinePlaced;
     public static event System.Action<PlacedMachine> OnMachineRemoved;
-
+    public static event System.Action<PlacedPipe> OnPipePlaced;
+    public static event System.Action<PlacedPipe> OnPipeRemoved;
 
     [Header("Grid Size")]
     [SerializeField] private int width = 16;
@@ -20,6 +21,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private GameObject machinePrefab;  // assign a plain Sprite prefab
 
     private Dictionary<Vector2Int, PlacedMachine> _grid = new();
+    private Dictionary<Vector2Int, PlacedPipe> _pipes = new();
 
     private void Awake()
     {
@@ -42,7 +44,12 @@ public bool TryPlace(MachineData data, Vector2Int cell)
         if (go.TryGetComponent<MachinePlaceholderView>(out var view))
             view.Init(data);
 
-        var placed = new PlacedMachine { data = data, cell = cell, gameObject = go };
+        MachineInstance instance = data.isExtractor
+            ? go.AddComponent<ExtractorInstance>()
+            : go.AddComponent<MachineInstance>();
+        instance.Init(data, cell);
+
+        var placed = new PlacedMachine { data = data, cell = cell, gameObject = go, instance = instance };
         _grid[cell] = placed;
         OnMachinePlaced?.Invoke(placed);
         return true;
@@ -67,6 +74,74 @@ public bool IsWorkshopPlaced(MachineData workshopData)
 
     public PlacedMachine GetAt(Vector2Int cell) =>
         _grid.TryGetValue(cell, out var m) ? m : null;
+
+    // ── Pipe layer ────────────────────────────────────────────────────────────
+
+    public bool IsPipeAt(Vector2Int cell) => _pipes.ContainsKey(cell);
+
+    public PlacedPipe GetPipeAt(Vector2Int cell) =>
+        _pipes.TryGetValue(cell, out var p) ? p : null;
+
+    public bool TryPlacePipe(PipeData data, Vector2Int cell)
+    {
+        if (!IsInBounds(cell) || IsPipeAt(cell)) return false;
+
+        var go = new GameObject($"Pipe_{cell}");
+        go.transform.SetParent(transform);
+        go.transform.position = CellToWorld(cell);
+        var sr = go.AddComponent<SpriteRenderer>();
+        sr.sortingOrder = 2;
+        var view = go.AddComponent<PipeView>();
+        view.Build(data.color, data.layer);
+
+        var placed = new PlacedPipe { data = data, cell = cell, gameObject = go };
+        _pipes[cell] = placed;
+        OnPipePlaced?.Invoke(placed);
+        RefreshPipeNeighbors(cell);
+        return true;
+    }
+
+    public bool TryRemovePipe(Vector2Int cell)
+    {
+        if (!_pipes.TryGetValue(cell, out var placed)) return false;
+        Destroy(placed.gameObject);
+        _pipes.Remove(cell);
+        OnPipeRemoved?.Invoke(placed);
+        RefreshPipeNeighbors(cell);
+        return true;
+    }
+
+    private static readonly Vector2Int[] _cardinals =
+    {
+        Vector2Int.up, Vector2Int.down, Vector2Int.right, Vector2Int.left
+    };
+
+    private void RefreshPipeNeighbors(Vector2Int origin)
+    {
+        // Refresh the bitmask of origin (if still present) and all 4 neighbors
+        RefreshPipeBitmask(origin);
+        foreach (var dir in _cardinals)
+            RefreshPipeBitmask(origin + dir);
+    }
+
+    private void RefreshPipeBitmask(Vector2Int cell)
+    {
+        if (!_pipes.TryGetValue(cell, out var pipe)) return;
+        var view = pipe.gameObject.GetComponent<PipeView>();
+        if (view == null) return;
+
+        bool n = ConnectsTo(pipe, cell + Vector2Int.up);
+        bool s = ConnectsTo(pipe, cell + Vector2Int.down);
+        bool e = ConnectsTo(pipe, cell + Vector2Int.right);
+        bool w = ConnectsTo(pipe, cell + Vector2Int.left);
+        view.UpdateConnections(n, e, s, w);
+    }
+
+    private bool ConnectsTo(PlacedPipe pipe, Vector2Int neighbor)
+    {
+        if (!_pipes.TryGetValue(neighbor, out var other)) return false;
+        return other.data.color == pipe.data.color && other.data.layer == pipe.data.layer;
+    }
 
     public Vector3 CellToWorld(Vector2Int cell) =>
         new Vector3(cell.x + 0.5f, cell.y + 0.5f, 0f);

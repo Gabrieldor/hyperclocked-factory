@@ -71,11 +71,12 @@ public class PlayerInventory : MonoBehaviour
     /// Returns false if completely full.
     public bool TryAddItem(ItemData item, int qty = 1)
     {
-        if (TryStack(item, qty, _hotbar))    return true;
-        if (TryStack(item, qty, _inventory)) return true;
-        if (TryEmpty(item, qty, _hotbar))    return true;
-        if (TryEmpty(item, qty, _inventory)) return true;
-        return false;
+        bool added = TryStack(item, qty, _hotbar)
+                  || TryStack(item, qty, _inventory)
+                  || TryEmpty(item, qty, _hotbar)
+                  || TryEmpty(item, qty, _inventory);
+        if (added) OnInventoryChanged?.Invoke();
+        return added;
     }
 
     private static bool TryStack(ItemData item, int qty, InventorySlot[] slots)

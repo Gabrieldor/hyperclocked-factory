@@ -15,3 +15,5 @@ MonoBehaviour:
   itemName: Tin Ore
   icon: {fileID: 0}
   stackSize: 64
+  placeableMachine: {fileID: 0}
+  placeablePipe: {fileID: 0}

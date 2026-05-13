@@ -13,4 +13,8 @@ public class MachineData : ScriptableObject
     public RecipeData[] availableRecipes;
     public Sprite sprite;
     public RuntimeAnimatorController animatorController;
+
+    [Header("Behaviour")]
+    [Tooltip("If true, this machine must be placed on a resource node and acts as an extractor.")]
+    public bool isExtractor;
 }

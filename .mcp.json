@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "unity": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "D:\\Unity\\Hyperclocked Factory\\Library\\MCPForUnity\\TerminalScripts\\mcp-terminal.cmd"
+      ]
+    }
+  }
+}

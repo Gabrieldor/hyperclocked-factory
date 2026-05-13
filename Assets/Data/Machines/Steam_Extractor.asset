@@ -22,3 +22,4 @@ MonoBehaviour:
   availableRecipes: []
   sprite: {fileID: -2661058482978203409, guid: 48672a4a578a64a44aea656710a891b9, type: 3}
   animatorController: {fileID: 0}
+  isExtractor: 1

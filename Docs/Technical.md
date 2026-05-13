@@ -31,6 +31,9 @@ Run these menu items **in order** the first time you open the project in Unity:
 | 3 | `HF > Create Phase 1 SO Assets` | Imports machine sprites, creates all ItemData / RecipeData / MachineData SOs |
 | 4 | `HF > Setup Input & Camera` | Adds `InputReader` GameObject and `CameraController` to Main Camera |
 | 5 | `HF > Setup Inventory UI` | Builds full Canvas hierarchy: hotbar, toolbar, inventory panel, pickup confirm. Also adds PlayerInventory and PlacementController. |
+| 6 | `HF > Setup Pipe System` | Creates PipeData + pipe ItemData SOs; adds TickManager, PipeNetwork, PipePortPanel to scene. |
+| 7 | `HF > Setup Machine Info Panel` | Builds MachineInfoPanel UI under GameCanvas; adds MachineInfoPanel_Host to scene with all fields wired. |
+| 8 | `HF > Setup Milestone UI` | Adds MilestoneTrackerPanel under GameCanvas and wires MilestonesBtn → Toggle. |
 
 After step 1, the MachinePlaceholder prefab is automatically wired into GridManager via the editor script — no manual drag needed.
 
@@ -58,6 +61,7 @@ Assets/
 │   ├── Items/         ← ItemData SO assets (one file per item)
 │   ├── Machines/      ← MachineData SO assets (one file per machine)
 │   ├── Milestones/    ← MilestoneData SO assets
+│   ├── Pipes/         ← PipeData SO assets (one file per color/layer combo)
 │   ├── Recipes/       ← RecipeData SO assets
 │   └── FloorTile.asset ← RandomFloorTile SO (created by HF > Setup Floor)
 ├── Prefabs/
@@ -71,35 +75,55 @@ Assets/
 └── Scripts/
     ├── Core/
     │   ├── CameraController.cs
+    │   ├── ExtractorInstance.cs   ← §9
     │   ├── GridManager.cs
     │   ├── InputReader.cs
     │   ├── MachinePlaceholderView.cs
+    │   ├── MachineInstance.cs     ← §8
+    │   ├── MachineState.cs        ← §8
+    │   ├── MilestoneManager.cs    ← §10
+    │   ├── NodeInstance.cs
+    │   ├── NodeManager.cs
+    │   ├── NodeView.cs
     │   ├── PlacedMachine.cs
+    │   ├── PlacedPipe.cs          ← §7
     │   ├── PlacementController.cs
     │   ├── PlayerInventory.cs
-    │   └── RandomFloorTile.cs
+    │   ├── PipeNetwork.cs         ← §7
+    │   ├── PipeView.cs            ← §7
+    │   ├── RandomFloorTile.cs
+    │   └── TickManager.cs         ← §7
     ├── Data/
     │   ├── InventorySlot.cs
     │   ├── ItemData.cs
     │   ├── MachineData.cs
     │   ├── MilestoneData.cs
+    │   ├── PipeData.cs            ← §7
     │   ├── RecipeData.cs
     │   └── TierEnum.cs
+    ├── Debug/
+    │   └── DebugStartInventory.cs ← populates hotbar on Start for testing; remove before ship
     ├── Editor/
     │   ├── FloorSetupEditor.cs
     │   ├── GameSceneBuilder.cs
     │   ├── InputCameraSetupEditor.cs
     │   ├── InventoryUISetupEditor.cs
+    │   ├── MachineInfoPanelSetupEditor.cs ← §8
+    │   ├── MilestoneUISetupEditor.cs      ← §10
+    │   ├── PipeSetupEditor.cs     ← §7
     │   └── SOSetupEditor.cs
-    ├── Machines/      ← (empty — machine runtime logic goes here in Phase 1)
     ├── Milestones/    ← (empty — MilestoneManager goes here)
     ├── Save/          ← (empty — GridState JSON goes here)
     └── UI/
         ├── HotbarUI.cs
         ├── InventoryScreenUI.cs
         ├── InventorySlotUI.cs
+        ├── MachineInfoPanel.cs    ← §8
         ├── NodeSelectionEntry.cs
         ├── NodeSelectionPanel.cs
+        ├── PipePortPanel.cs       ← §7
+        ├── MilestoneNodeUI.cs     ← §10
+        ├── MilestoneTrackerUI.cs  ← §10
         └── WorkshopButtonUI.cs
 ```
 
@@ -121,7 +145,8 @@ ScriptableObjects hold all game data. No values are hardcoded in scripts.
 | `itemName` | `string` | Display name (e.g. "Copper Ore") |
 | `icon` | `Sprite` | Inventory/hotbar icon — assign when art is ready |
 | `stackSize` | `int` | Max items per inventory slot (default 64) |
-| `placeableMachine` | `MachineData` | If set, tapping a grid cell with this item places this machine. Null for ores, dusts, ingots. |
+| `placeableMachine` | `MachineData` | If set, tapping a grid cell places this machine. Null for ores, dusts, ingots. |
+| `placeablePipe` | `PipeData` | If set, tapping a grid cell places this pipe. Mutually exclusive with `placeableMachine`. |
 
 **Phase 1 assets created by `HF > Create Phase 1 SO Assets`:**
 
@@ -134,6 +159,8 @@ ScriptableObjects hold all game data. No values are hardcoded in scripts.
 | `TinDust.asset` | Tin Dust |
 | `CopperIngot.asset` | Copper Ingot |
 | `BronzeIngot.asset` | Bronze Ingot |
+| `Item_SteamExtractor.asset` | Steam Extractor (placeable; `placeableMachine` → Steam_Extractor) |
+| `Item_PrimitiveFurnace.asset` | Primitive Furnace (placeable; `placeableMachine` → Steam_PrimitiveFurnace) |
 
 ---
 
@@ -216,6 +243,13 @@ ScriptableObjects hold all game data. No values are hardcoded in scripts.
 - `FloorExpansion` — grows the grid to `floorExpansionSize × floorExpansionSize`
 - `TierTransition` — unlocks the next tier (LV, MV, etc.)
 
+**Phase 1 assets created by `HF > Create Phase 1 SO Assets`:**
+
+| File | milestoneName | Trigger | Prerequisites |
+|---|---|---|---|
+| `Milestone_S0.asset` | S0 — Steam Age Begins | None (auto-fires on scene load) | — |
+| `Milestone_S1.asset` | S1 — First Alloy | First Bronze Ingot produced | S0 |
+
 ---
 
 ### RandomFloorTile
@@ -239,6 +273,39 @@ public enum Tier { Steam = 0, LV = 1, MV = 2, HV = 3 }
 ```
 
 Used by `MachineData.tier` and by `MachinePlaceholderView` to pick the tint color.
+
+---
+
+### PipeData
+**File:** `Assets/Scripts/Data/PipeData.cs`  
+**Asset location:** `Assets/Data/Pipes/`  
+**Menu:** `HF > Pipe Data`  
+**Created by:** `HF > Setup Pipe System`
+
+| Field | Type | Description |
+|---|---|---|
+| `pipeName` | `string` | Display name, e.g. "White Item Pipe" |
+| `color` | `PipeColor` | White / Red / Green / Blue / Yellow |
+| `layer` | `PipeLayer` | Item / Fluid |
+| `icon` | `Sprite` | Hotbar/inventory icon — assign when art is ready |
+
+**Enums (defined in `PipeData.cs`):**
+- `PipeColor` — `White, Red, Green, Blue, Yellow`
+- `PipeLayer` — `Item, Fluid`
+
+Only same-color, same-layer pipes connect to each other. Machines accept connections from any color pipe.
+
+**Phase 1 assets created by `HF > Setup Pipe System`:**
+
+| File | Color | Layer |
+|---|---|---|
+| `ItemPipe_White.asset` | White | Item |
+| `ItemPipe_Red.asset` | Red | Item |
+| `ItemPipe_Green.asset` | Green | Item |
+| `ItemPipe_Blue.asset` | Blue | Item |
+| `ItemPipe_Yellow.asset` | Yellow | Item |
+
+Matching `ItemData` SOs are also created in `Assets/Data/Items/` (`ItemPipe_{Color}_Item.asset`) so pipes can be held in the hotbar and placed on the grid.
 
 ---
 
@@ -280,6 +347,21 @@ Owns the dictionary that maps grid cells to placed machines. All placement/remov
 |---|---|---|
 | `OnMachinePlaced` | `Action<PlacedMachine>` | A machine is successfully placed |
 | `OnMachineRemoved` | `Action<PlacedMachine>` | A machine is removed from the grid |
+| `OnPipePlaced` | `Action<PlacedPipe>` | A pipe is successfully placed |
+| `OnPipeRemoved` | `Action<PlacedPipe>` | A pipe is removed from the grid |
+
+**Pipe layer public API:**
+
+| Method | Returns | Description |
+|---|---|---|
+| `IsPipeAt(cell)` | `bool` | True if a pipe exists at that cell |
+| `GetPipeAt(cell)` | `PlacedPipe` | Returns pipe at cell, or null |
+| `TryPlacePipe(data, cell)` | `bool` | Creates pipe GO with `PipeView`, registers in `_pipes`, fires `OnPipePlaced`, refreshes bitmask |
+| `TryRemovePipe(cell)` | `bool` | Destroys pipe GO, removes from `_pipes`, fires `OnPipeRemoved`, refreshes bitmask |
+
+Pipes and machines occupy the same cell space but different dictionaries — a cell can hold one machine OR one pipe, not both. (Pipes cannot be placed on machine cells and vice versa — `IsCellEmpty` checks `_grid` only; pipe cells are checked separately via `IsPipeAt`.)
+
+**Bitmask refresh:** after any `TryPlacePipe` or `TryRemovePipe`, `RefreshPipeNeighbors` is called. It re-evaluates the 4 cardinal neighbors of the changed cell and calls `PipeView.UpdateConnections` on each. A pipe connects to a neighbor if they share the same `PipeColor` and `PipeLayer`.
 
 **Gizmos:** draws the grid lines in the Scene view (visible in editor, not in game).
 
@@ -445,6 +527,67 @@ Manages the inventory panel (36 slots) and the pickup confirmation panel.
 
 ---
 
+### MilestoneTrackerUI  *(§10)*
+**File:** `Assets/Scripts/UI/MilestoneTrackerUI.cs`  
+**Component on:** `GameCanvas`  
+**Pattern:** Singleton (`MilestoneTrackerUI.Instance`)
+
+Full-screen overlay that shows all milestones tracked by `MilestoneManager`. Opened via `MilestonesBtn` in the Toolbar.
+
+**Inspector fields:**
+
+| Field | Type | Description |
+|---|---|---|
+| `panel` | `GameObject` | `MilestoneTrackerPanel` — shown/hidden by Toggle/Close |
+| `contentRoot` | `Transform` | `ScrollView/Viewport/Content` — parent for spawned cards |
+
+**Public API:**
+
+| Method | Description |
+|---|---|
+| `Toggle()` | Show/hide the panel (called by MilestonesBtn) |
+| `Close()` | Hide the panel (called by header close button) |
+
+**Runtime behavior:**
+- `Start()` subscribes to `MilestoneManager.OnMilestoneUnlocked` and calls `BuildCards()`.
+- `BuildCards()` creates one `MilestoneNodeUI` card per entry in `MilestoneManager.AllMilestones`. Cards are built entirely in code (no prefab required) using `VerticalLayoutGroup`, `Image`, and `TextMeshProUGUI`.
+- On `OnMilestoneUnlocked`, calls `Refresh()` on all cards so colors update in real time.
+
+**Scene hierarchy under `GameCanvas`:**
+```
+MilestoneTrackerPanel     ← full-screen overlay (hidden by default)
+├── Header                ← dark bar: "MILESTONES" title + ✕ close button
+└── ScrollView            ← vertical scroll, Mask on Viewport
+    └── Viewport
+        └── Content       ← VerticalLayoutGroup + ContentSizeFitter
+            └── [Card_*]  ← spawned at runtime per MilestoneData SO
+```
+
+---
+
+### MilestoneNodeUI  *(§10)*
+**File:** `Assets/Scripts/UI/MilestoneNodeUI.cs`  
+**Component on:** card GameObjects created by `MilestoneTrackerUI.BuildCards()`
+
+Displays one milestone as a tappable card.
+
+**Serialized fields (set via reflection by `MilestoneTrackerUI`):**
+`background` (Image), `nameLabel`, `conditionLabel`, `rewardLabel` (TMP_Text), `detailPanel` (GameObject)
+
+**State colors:**
+
+| State | Background Color |
+|---|---|
+| Locked (prerequisites unmet) | Dark grey `(0.22, 0.22, 0.26)` |
+| Available (prereqs met, not yet triggered) | Light grey `(0.75, 0.75, 0.80)` |
+| Unlocked | Green `(0.20, 0.65, 0.30)` |
+
+**`Init(MilestoneData)`** — sets labels, calls `Refresh()`, hides detail panel.  
+**`Refresh()`** — re-reads `MilestoneManager.IsUnlocked` + prerequisites to pick the correct color.  
+**`OnTap()`** — toggles the detail panel (shows reward text).
+
+---
+
 ### WorkshopButtonUI
 **File:** `Assets/Scripts/UI/WorkshopButtonUI.cs`  
 **Component on:** `WorkshopBtn` in Toolbar
@@ -557,6 +700,248 @@ Subscribes to `InputReader` events in `Start()` and translates them into grid ac
 2. `CameraController.ScreenToCell` → null → return
 3. `GridManager.GetAt(cell)` → null (no machine) → return
 4. `InventoryScreenUI.ShowPickupConfirm(cell, machineName)`
+
+---
+
+### PlacedPipe
+**File:** `Assets/Scripts/Core/PlacedPipe.cs`  
+**Type:** Plain C# class (not a MonoBehaviour)
+
+Runtime snapshot of one placed pipe. Lives in `GridManager._pipes`.
+
+| Field | Type | Description |
+|---|---|---|
+| `data` | `PipeData` | SO reference — color, layer |
+| `cell` | `Vector2Int` | Grid position |
+| `gameObject` | `GameObject` | The scene instance (has `PipeView`) |
+| `portAssignments` | `Dictionary<Vector2Int, PortDirection>` | Key = adjacent machine cell; value = Input or Output |
+
+**`PortDirection` enum** (defined in `PlacedPipe.cs`): `Input, Output`  
+Port assignments are set at runtime by the player via `PipePortPanel`.
+
+---
+
+### PipeView
+**File:** `Assets/Scripts/Core/PipeView.cs`  
+**Added to:** each pipe GameObject by `GridManager.TryPlacePipe`  
+**Requires:** `SpriteRenderer` on the same GameObject (the center body)
+
+Placeholder pipe visual: a colored center square + 4 directional arm sprites. Arms are enabled/disabled based on the bitmask of same-color same-layer neighbors.
+
+**API:**
+
+| Method | Description |
+|---|---|
+| `Build(PipeColor)` | Called once after instantiation. Creates center renderer + 4 arm child GOs, tints all to the pipe color. |
+| `UpdateConnections(n, e, s, w)` | Enables/disables arm GOs based on which cardinal directions have a matching neighbor. |
+
+**Sorting order:** center = 2, arms = 2. Above machines (order 1), below UI.
+
+**Color table:**
+
+| PipeColor | RGBA |
+|---|---|
+| White | (200, 200, 200) |
+| Red | (220, 60, 60) |
+| Green | (60, 200, 60) |
+| Blue | (60, 120, 220) |
+| Yellow | (220, 200, 60) |
+
+When real pipe sprites land, replace `PipeView.Build` to assign sprites from an atlas — the `UpdateConnections` interface stays the same.
+
+---
+
+### TickManager
+**File:** `Assets/Scripts/Core/TickManager.cs`  
+**GameObject:** `TickManager` in GameScene  
+**Pattern:** Singleton (`TickManager.Instance`)  
+**Created by:** `HF > Setup Pipe System`
+
+Fires a global tick every `tickInterval` seconds (default 1s). All time-based game systems (pipes, machines, extractors) subscribe to `OnTick` instead of using `Update`.
+
+| Event | Fires when |
+|---|---|
+| `OnTick` | Every `tickInterval` seconds (default 1.0s) |
+
+Inspector field `tickInterval` — adjust in editor for debug speed-up; never hardcode tick timing in subscribers.
+
+---
+
+### PipeNetwork
+**File:** `Assets/Scripts/Core/PipeNetwork.cs`  
+**GameObject:** `PipeNetwork` in GameScene  
+**Pattern:** Singleton (`PipeNetwork.Instance`)  
+**Created by:** `HF > Setup Pipe System`
+
+Maintains the adjacency graph of all same-color same-layer pipe segments and drives GT-style item transit (items are invisible in the pipe; they arrive after N ticks = N cells traveled).
+
+**How the graph is maintained:**
+- Subscribes to `GridManager.OnPipePlaced` / `OnPipeRemoved`
+- On place: scans 4 cardinal neighbors; adds bidirectional edge for each same-color same-layer neighbor
+- On remove: removes all edges to/from that cell
+
+**BFS routing (`FindPath`):**
+
+```
+FindPath(sourceMachineCell, sinkMachineCell, color, layer)
+→ Collect start cells: pipes adjacent to source that have portAssignment Output toward source
+→ Collect goal cells: pipes adjacent to sink that have portAssignment Input toward sink
+→ BFS through same-color same-layer pipe graph
+→ Return ordered List<Vector2Int> of pipe cells, or null if unreachable
+```
+
+**Item transit (`DispatchItem` + `Tick`):**
+
+```
+DispatchItem(item, path, destinationMachine)
+→ Queues a TransitEntry: { destination, item, ticksLeft = path.Count }
+
+Tick (via TickManager.OnTick):
+→ Decrements ticksLeft for all entries
+→ On ticksLeft == 0: fires OnItemArrived(destinationMachine, item) and removes entry
+```
+
+**Events:**
+
+| Event | Signature | Fires when |
+|---|---|---|
+| `OnItemArrived` | `Action<Vector2Int, ItemData>` | An in-transit item reaches its destination machine cell |
+
+Machines (Section 8) subscribe to `OnItemArrived` to pull items into their input buffer.
+
+---
+
+### PipePortPanel
+**File:** `Assets/Scripts/UI/PipePortPanel.cs`  
+**Pattern:** Singleton (`PipePortPanel.Instance`)  
+**Created by:** `HF > Setup Pipe System` (bare GameObject — UI fields must be wired manually)
+
+Opens when player taps an existing pipe with no hotbar item selected. Shows one toggle button per adjacent machine connection, letting the player cycle between `Input` and `Output`.
+
+**Inspector fields (wire manually in the scene):**
+
+| Field | Type | Description |
+|---|---|---|
+| `panel` | `GameObject` | Root panel to show/hide |
+| `titleText` | `TextMeshProUGUI` | "Pipe Ports [x,y]" label |
+| `entryContainer` | `Transform` | Parent for entry rows |
+| `entryPrefab` | `GameObject` | Row prefab: TMP_Text label + Button |
+
+All fields are null-safe — the component compiles and runs without them (ports are toggled in memory even if UI is not wired yet).
+
+**Open flow:**
+1. `PlacementController.HandleTap` → no hotbar item, pipe at cell → `PipePortPanel.Instance.Open(cell)`
+2. Panel scans 4 neighbors for machines; shows one row per adjacent machine
+3. Row label = "North/South/East/West: Input/Output"
+4. Button toggles `PlacedPipe.portAssignments[machineCell]` between `Input` and `Output`
+
+---
+
+### MachineState
+**File:** `Assets/Scripts/Core/MachineState.cs`
+
+```csharp
+public enum MachineState { Idle, Processing, OutputFull, NoInput, Halted }
+```
+
+| State | Meaning |
+|---|---|
+| `Idle` | Has a recipe selected, waiting for inputs |
+| `Processing` | Inputs consumed, timer counting down |
+| `OutputFull` | Cycle finished but output pipe is full — halted until path clears |
+| `NoInput` | No recipe or inputs missing |
+| `Halted` | No node (Extractor), no recipe, or explicitly stopped |
+
+---
+
+### MachineInstance
+**File:** `Assets/Scripts/Core/MachineInstance.cs`  
+**Component on:** machine GameObjects (added by `GridManager.TryPlace`)
+
+MonoBehaviour attached to every placed machine GO. Drives the per-machine state machine and buffers.
+
+**Fields (set by GridManager after instantiation):**
+
+| Field | Type | Description |
+|---|---|---|
+| `cell` | `Vector2Int` | Grid position (set via `Init`) |
+| `State` | `MachineState` | Current machine state |
+| `Progress` | `float` | 0–1 progress through the current processing cycle |
+| `InputBuffer` | `Dictionary<ItemData, int>` | Items waiting to be consumed |
+| `OutputBuffer` | `Queue<ItemData>` | Items produced, waiting for dispatch |
+
+**Public API:**
+
+| Method | Description |
+|---|---|
+| `Init(MachineData, Vector2Int)` | Called once by GridManager after placement; subscribes to TickManager and PipeNetwork |
+| `CanAcceptItem(ItemData)` | Returns true if the active recipe needs this item and the buffer has room |
+| `SetRecipe(RecipeData)` | Changes active recipe; clears buffers and resets timer |
+
+**Tick logic (state machine):**
+
+```
+Idle:      If recipe set and all inputs buffered → consume inputs → Processing
+Processing: Decrement timer each tick → on complete → push to OutputBuffer → OutputFull
+OutputFull: Try TryDispatchOutputs → if dispatched → Idle; else stay OutputFull
+```
+
+**`TryDispatchOutputs`:** calls `PipeNetwork.FindPathToAcceptor` for each item in OutputBuffer. If a path exists, calls `PipeNetwork.DispatchItem`. If no path, state stays `OutputFull`.
+
+**Item arrival:** subscribes to `PipeNetwork.OnItemArrived`. Filters by cell. If `CanAcceptItem`, increments InputBuffer. If buffer didn't have room, item is lost (prototype simplification).
+
+---
+
+### ExtractorInstance
+**File:** `Assets/Scripts/Core/ExtractorInstance.cs`  
+**Extends:** `MachineInstance`
+
+Extractor variant — no recipe, no input buffer. Produces 1× the node's resource per tick and dispatches it to the nearest accepting machine via pipe.
+
+**Public API:**
+
+| Method | Description |
+|---|---|
+| `SetNode(NodeInstance)` | Wires to a node; sets `node.hasExtractor = true`; calls `node.view.Refresh()` |
+| `ClearNode()` | Detaches from node; sets `hasExtractor = false`; state → Halted |
+
+**Tick logic:**
+1. If no node or no assigned resource → `Halted`
+2. `PipeNetwork.FindPathToAcceptor(cell, item)` → no path → `OutputFull`
+3. Path found → `PipeNetwork.DispatchItem` → state `Processing`
+
+**Wiring:** `NodeManager` subscribes to `GridManager.OnMachinePlaced` and calls `SetNode` automatically when an Extractor lands on a node cell. `ClearNode` is called on `OnMachineRemoved`.
+
+---
+
+### MachineInfoPanel
+**File:** `Assets/Scripts/UI/MachineInfoPanel.cs`  
+**Component on:** `MachineInfoPanel_Host` in GameScene  
+**Pattern:** Singleton (`MachineInfoPanel.Instance`)
+
+Shows runtime info for a tapped machine. Opened by `PlacementController` when player taps a machine cell with no hotbar item selected.
+
+**Inspector fields (all wired by `HF > Setup Machine Info Panel`):**
+
+| Field | Type | Description |
+|---|---|---|
+| `panel` | `GameObject` | Root panel under GameCanvas; hidden by default |
+| `nameLabel` | `TextMeshProUGUI` | Machine name |
+| `stateLabel` | `TextMeshProUGUI` | Current `MachineState` string; live-updated every frame |
+| `progressBar` | `Slider` | 0–1 fill; live-updated every frame |
+| `recipeContainer` | `Transform` | HorizontalLayoutGroup parent for recipe buttons |
+| `recipeButtonPrefab` | `GameObject` | Button prefab with TMP_Text label |
+| `removeButton` | `Button` | → `OnRemove` → `InventoryScreenUI.ShowPickupConfirm` |
+| `closeButton` | `Button` | → `Close` |
+
+**Open/close flow:**
+- `Open(PlacedMachine)` — sets `_current`, shows panel, calls `Refresh` + `RebuildRecipeButtons`
+- `Close()` — clears `_current`, hides panel
+- `Update()` — live-updates `stateLabel` and `progressBar` each frame while open
+
+**Recipe button flow:** one button per recipe in `data.availableRecipes`. Tap → `instance.SetRecipe(r)` → `Refresh()`.
+
+**Remove flow:** `OnRemove` → `InventoryScreenUI.ShowPickupConfirm(cell, machineName)` (same confirm dialog as long-press pickup).
 
 ---
 
@@ -675,6 +1060,45 @@ Then delegates to `GridManager.WorldToCell` and `GridManager.IsInBounds`.
 
 ---
 
+### MilestoneManager  *(§10)*
+**File:** `Assets/Scripts/Core/MilestoneManager.cs`  
+**GameObject:** `MilestoneManager` in GameScene  
+**Pattern:** Singleton (`MilestoneManager.Instance`)
+
+Tracks which milestones are unlocked. Listens for item-produced and machine-placed events, checks trigger conditions and prerequisite chains, then fires `OnMilestoneUnlocked`. The Milestone Tracker UI subscribes to this event.
+
+**Inspector fields:**
+
+| Field | Type | Description |
+|---|---|---|
+| `allMilestones` | `List<MilestoneData>` | All milestones in the game. Drag milestone SOs here. |
+
+**Public API:**
+
+| Member | Type | Description |
+|---|---|---|
+| `Instance` | `MilestoneManager` | Singleton accessor |
+| `AllMilestones` | `IReadOnlyList<MilestoneData>` | All registered milestones |
+| `IsUnlocked(m)` | `bool` | True if milestone has already fired |
+| `OnMilestoneUnlocked` | `static event Action<MilestoneData>` | Fires whenever a new milestone is unlocked |
+
+**Inputs listened to:**
+
+| Event | Source | Action |
+|---|---|---|
+| `MachineInstance.OnItemProduced` | Any machine finishing a recipe | Checks item-triggered milestones |
+| `GridManager.OnMachinePlaced` | Player placing a machine | Checks machine-triggered milestones |
+
+**Unlock flow:**
+1. `Start()` auto-fires all milestones with no `triggerItem` and no `triggerMachine` (e.g. S0).
+2. When an event fires, iterates `allMilestones` looking for unmatched triggers.
+3. `TryUnlock(m)` checks prerequisites; if all are in `_unlocked`, adds `m` and fires `OnMilestoneUnlocked`.
+4. After each unlock, cascades to re-check auto-milestones whose prerequisites may now be satisfied.
+
+**`MachineInstance.OnItemProduced`** — added to `MachineInstance` to support milestone detection. Fires once per output stack in `FinishProcessing`, carrying the `ItemData` produced and the `MachineData` that produced it.
+
+---
+
 ## 5. Editor Scripts
 
 Editor scripts live in `Assets/Scripts/Editor/` and are stripped from builds automatically. They only run in the Unity Editor.
@@ -764,6 +1188,45 @@ Run after `HF > Setup Game Scene`. Safe to re-run — skips components already p
 
 ---
 
+### PipeSetupEditor
+**File:** `Assets/Scripts/Editor/PipeSetupEditor.cs`  
+**Menu:** `HF > Setup Pipe System`
+
+Run once after `HF > Create Phase 1 SO Assets`. Safe to re-run — skips existing assets.
+
+**What it creates:**
+1. `PipeData` SO assets in `Assets/Data/Pipes/` — one per `PipeColor` (Item layer)
+2. `ItemData` SO assets in `Assets/Data/Items/` — one per color with `placeablePipe` wired, so pipes can be held in the hotbar
+3. `TickManager` GameObject in scene (skips if already present)
+4. `PipeNetwork` GameObject in scene (skips if already present)
+5. `PipePortPanel` GameObject in scene — **wire panel/prefab fields manually** (null-safe without wiring)
+
+---
+
+### MachineInfoPanelSetupEditor
+**File:** `Assets/Scripts/Editor/MachineInfoPanelSetupEditor.cs`  
+**Menu:** `HF > Setup Machine Info Panel`
+
+Builds the `MachineInfoPanel` UI hierarchy under `GameCanvas` and creates `MachineInfoPanel_Host` with all fields wired. Safe to re-run — destroys and recreates child objects that lack a `RectTransform` (leftover from a failed previous run).
+
+**What it creates under `GameCanvas`:**
+
+| Child | Component | Notes |
+|---|---|---|
+| `MachineInfoPanel` | `Image` | Panel root; bottom-anchored, 200px tall, above hotbar |
+| `MachineInfoPanel/NameLabel` | `TextMeshProUGUI` | Machine name, 16px bold |
+| `MachineInfoPanel/StateLabel` | `TextMeshProUGUI` | State string, 12px green tint |
+| `MachineInfoPanel/ProgressBar` | `Slider` | 0–1 progress |
+| `MachineInfoPanel/RecipeContainer` | `HorizontalLayoutGroup` | Parent for recipe buttons |
+| `MachineInfoPanel/RemoveButton` | `Button`, `Image` | Red; confirms pickup |
+| `MachineInfoPanel/CloseButton` | `Button`, `Image` | Grey; closes panel |
+
+Also creates `RecipeButton.prefab` at `Assets/Prefabs/UI/RecipeButton.prefab` if it doesn't exist (32×120px button with centred TMP label).
+
+**Scene object:** `MachineInfoPanel_Host` — a bare GameObject (not under Canvas) that holds `MachineInfoPanel` component with all serialized refs wired via `SerializedObject`.
+
+---
+
 ### SOSetupEditor
 **File:** `Assets/Scripts/Editor/SOSetupEditor.cs`  
 **Menu:** `HF > Create Phase 1 SO Assets`
@@ -804,7 +1267,7 @@ This prefab is the template for every placed machine in Phase 1. When real machi
 
 ## 7. Scene Hierarchy
 
-After running all five `HF` menu items, `GameScene.unity` looks like this:
+After running all seven `HF` menu items, `GameScene.unity` looks like this:
 
 ```
 GameScene
@@ -817,6 +1280,16 @@ GameScene
 │
 ├── GridManager            [GridManager]
 │     width=16, height=16, machinePrefab → MachinePlaceholder.prefab
+│
+├── TickManager            [TickManager]
+│     tickInterval=1.0s
+│
+├── PipeNetwork            [PipeNetwork]
+│
+├── PipePortPanel          [PipePortPanel]
+│     panel/titleText/entryContainer/entryPrefab — wire manually when UI prefab is built
+│
+├── MachineInfoPanel_Host  [MachineInfoPanel]  ← §8; all fields wired by Setup Machine Info Panel
 │
 ├── PlayerInventory        [PlayerInventory]
 ├── PlacementController    [PlacementController]  ← execution order -50
@@ -848,6 +1321,14 @@ GameScene
       │     ├── SlotGrid   [GridLayoutGroup]  9 cols × 4 rows
       │     │     └── InvSlot0–35  [Button, Image, InventorySlotUI]
       │     └── CloseButton [Button, Image, TMP_Text]  → InventoryScreenUI.ToggleInventory
+      │
+      ├── MachineInfoPanel   [Image]  ← §8; hidden by default; opened on machine tap
+      │     ├── NameLabel    [TextMeshProUGUI]
+      │     ├── StateLabel   [TextMeshProUGUI]
+      │     ├── ProgressBar  [Slider]
+      │     ├── RecipeContainer [HorizontalLayoutGroup]
+      │     ├── RemoveButton [Button, Image]
+      │     └── CloseButton  [Button, Image]
       │
       └── PickupConfirmPanel [Image]  ← hidden, shown on long-press
             ├── Label      [TMP_Text]

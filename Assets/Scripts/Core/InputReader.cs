@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.EnhancedTouch;
 using Touch      = UnityEngine.InputSystem.EnhancedTouch.Touch;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
@@ -122,7 +123,8 @@ public class InputReader : MonoBehaviour
                     else if (!_longPressConsumed && Time.unscaledTime - _pressTime >= longPressTime)
                     {
                         _longPressConsumed = true;
-                        OnLongPress?.Invoke(_pressScreenPos);
+                        if (!IsPointerOverUI(t.touchId))
+                            OnLongPress?.Invoke(_pressScreenPos);
                         _state = State.None;
                     }
                 }
@@ -135,7 +137,7 @@ public class InputReader : MonoBehaviour
 
             case TouchPhase.Ended:
             case TouchPhase.Canceled:
-                if (_state == State.MaybeTap && !_longPressConsumed)
+                if (_state == State.MaybeTap && !_longPressConsumed && !IsPointerOverUI(t.touchId))
                     OnTap?.Invoke(t.screenPosition);
                 _state = State.None;
                 break;
@@ -172,7 +174,7 @@ public class InputReader : MonoBehaviour
         if (mouse.leftButton.wasReleasedThisFrame)
         {
             float moved = Vector2.Distance(mouse.position.ReadValue(), _pressScreenPos);
-            if (moved <= dragThreshold)
+            if (moved <= dragThreshold && !IsPointerOverUI())
                 OnTap?.Invoke(mouse.position.ReadValue());
         }
 
@@ -198,11 +200,20 @@ public class InputReader : MonoBehaviour
         }
 
         if (mouse.rightButton.wasReleasedThisFrame)
+        {
+            // Right-click without dragging = long-press equivalent on desktop
+            if (_state == State.MaybeTap && !IsPointerOverUI())
+                OnLongPress?.Invoke(_pressScreenPos);
             _state = State.None;
+        }
 
         // ── Scroll wheel → zoom ───────────────────────────────────────────
         float scroll = mouse.scroll.ReadValue().y;
         if (scroll != 0f)
             ScrollZoomDelta = -scroll * scrollZoomSensitivity * Time.unscaledDeltaTime;
     }
+
+    // Returns true when the pointer is over a UI element — suppresses world taps/long-presses.
+    private static bool IsPointerOverUI(int pointerId = -1) =>
+        EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(pointerId);
 }

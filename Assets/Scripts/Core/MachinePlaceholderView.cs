@@ -21,6 +21,8 @@ public class MachinePlaceholderView : MonoBehaviour
     {
         if (data == null) return;
 
+        _sr.sortingOrder = 1; // above nodes (0), below pipes (2)
+
         if (data.sprite != null)
         {
             _sr.sprite = data.sprite;

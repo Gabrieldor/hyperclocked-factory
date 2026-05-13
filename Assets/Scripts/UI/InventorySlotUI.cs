@@ -16,7 +16,8 @@ public class InventorySlotUI : MonoBehaviour
 {
     [SerializeField] private Image    iconImage;
     [SerializeField] private TMP_Text countLabel;
-    [SerializeField] private Image    highlight;   // coloured border, shown when slot is selected
+    [SerializeField] private Image    highlight;
+    [SerializeField] [Range(0f, 1f)] private float highlightAlpha = 0.25f;
 
     private int                  _index;
     private System.Action<int>   _onTap;
@@ -45,6 +46,14 @@ public class InventorySlotUI : MonoBehaviour
             countLabel.text = (hasItem && slot.quantity > 1) ? slot.quantity.ToString() : "";
 
         if (highlight != null)
+        {
             highlight.enabled = selected;
+            if (selected)
+            {
+                var c = highlight.color;
+                c.a = highlightAlpha;
+                highlight.color = c;
+            }
+        }
     }
 }

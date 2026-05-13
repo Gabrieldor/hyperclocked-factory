@@ -40,7 +40,7 @@ public class PlacementController : MonoBehaviour
 
     // ── Tap → place ───────────────────────────────────────────────────────────
 
-private void HandleTap(Vector2 screenPos)
+    private void HandleTap(Vector2 screenPos)
     {
         if (NodeSelectionPanel.Instance != null && NodeSelectionPanel.Instance.IsOpen) return;
         if (_camera == null || GridManager.Instance == null) return;
@@ -55,24 +55,52 @@ private void HandleTap(Vector2 screenPos)
 
         if (hotbarIndex < 0)
         {
-            NodeManager.Instance?.TryOpenNodePanel(cell.Value);
+            // No item selected: open machine panel, port panel, or node panel
+            if (GridManager.Instance.GetAt(cell.Value) is { } placed)
+                MachineInfoPanel.Instance?.Open(placed);
+            else if (GridManager.Instance.IsPipeAt(cell.Value))
+                PipePortPanel.Instance?.Open(cell.Value);
+            else
+                NodeManager.Instance?.TryOpenNodePanel(cell.Value);
             return;
         }
 
         var slot = inv.GetHotbarSlot(hotbarIndex);
         if (slot.IsEmpty || slot.item == null) return;
 
+        // Pipe placement
+        if (slot.item.placeablePipe != null)
+        {
+            var pipeData = slot.item.placeablePipe;
+            if (!GridManager.Instance.IsPipeAt(cell.Value) &&
+                GridManager.Instance.IsCellEmpty(cell.Value))
+            {
+                if (inv.TryConsumeFromHotbar(hotbarIndex))
+                {
+                    GridManager.Instance.TryPlacePipe(pipeData, cell.Value);
+                    var pipe = GridManager.Instance.GetPipeAt(cell.Value);
+                    if (pipe != null) pipe.sourceItem = slot.item;
+                    if (inv.GetHotbarSlot(hotbarIndex).IsEmpty) inv.ClearSelection();
+                }
+            }
+            return;
+        }
+
+        // Machine placement
         var machine = slot.item.placeableMachine;
         if (machine == null) return;
 
         if (!GridManager.Instance.IsCellEmpty(cell.Value)) return;
 
+        // Extractor must be placed on a resource node
+        if (machine.isExtractor && !NodeManager.Instance.IsNodeCell(cell.Value)) return;
+
         if (!inv.TryConsumeFromHotbar(hotbarIndex)) return;
 
         GridManager.Instance.TryPlace(machine, cell.Value);
-
-        if (inv.GetHotbarSlot(hotbarIndex).IsEmpty)
-            inv.ClearSelection();
+        var newMachine = GridManager.Instance.GetAt(cell.Value);
+        if (newMachine != null) newMachine.sourceItem = slot.item;
+        if (inv.GetHotbarSlot(hotbarIndex).IsEmpty) inv.ClearSelection();
     }
 
     // ── Long press → pickup ───────────────────────────────────────────────────
@@ -84,8 +112,20 @@ private void HandleTap(Vector2 screenPos)
         var cell = _camera.ScreenToCell(screenPos);
         if (cell == null) return;
 
+        // Long-press on pipe → remove and return to inventory
+        if (GridManager.Instance.IsPipeAt(cell.Value))
+        {
+            var pipe = GridManager.Instance.GetPipeAt(cell.Value);
+            if (pipe == null) return;
+            var itemToReturn = pipe.sourceItem;
+            GridManager.Instance.TryRemovePipe(cell.Value);
+            if (itemToReturn != null)
+                PlayerInventory.Instance?.TryAddItem(itemToReturn, 1);
+            return;
+        }
+
         var placed = GridManager.Instance.GetAt(cell.Value);
-        if (placed == null) return;                        // no machine here
+        if (placed == null) return;
 
         InventoryScreenUI.Instance?.ShowPickupConfirm(cell.Value, placed.data.machineName);
     }

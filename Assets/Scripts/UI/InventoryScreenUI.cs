@@ -82,12 +82,8 @@ public class InventoryScreenUI : MonoBehaviour
         var placed = GridManager.Instance?.GetAt(_pendingPickupCell);
         if (placed != null)
         {
-            // Find the ItemData that corresponds to this machine.
-            // For Phase 1, we look for an ItemData whose placeableMachine matches.
-            // Phase 2: MachineData will directly reference its ItemData.
-            var item = FindItemForMachine(placed.data);
-            if (item != null)
-                PlayerInventory.Instance?.TryAddItem(item);
+            if (placed.sourceItem != null)
+                PlayerInventory.Instance?.TryAddItem(placed.sourceItem);
 
             GridManager.Instance.TryRemove(_pendingPickupCell);
         }
@@ -96,15 +92,4 @@ public class InventoryScreenUI : MonoBehaviour
 
     /// Cancel button.
     public void OnPickupCancelled() => pickupConfirmPanel.SetActive(false);
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
-    // Temporary lookup — Phase 2 will store ItemData directly on MachineData.
-    private static ItemData FindItemForMachine(MachineData machine)
-    {
-        var allItems = Resources.FindObjectsOfTypeAll<ItemData>();
-        foreach (var item in allItems)
-            if (item.placeableMachine == machine) return item;
-        return null;
-    }
 }

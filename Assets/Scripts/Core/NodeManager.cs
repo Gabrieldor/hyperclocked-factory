@@ -42,7 +42,7 @@ public class NodeManager : MonoBehaviour
         Instance = this;
     }
 
-private void Start()
+    private void Start()
     {
         foreach (var r in startingResources)
             if (r != null && !_unlockedResources.Contains(r)) _unlockedResources.Add(r);
@@ -57,6 +57,28 @@ private void Start()
             view.Init(instance, this);
             _nodes.Add(instance);
         }
+
+        GridManager.OnMachinePlaced  += OnMachinePlaced;
+        GridManager.OnMachineRemoved += OnMachineRemoved;
+    }
+
+    private void OnDestroy()
+    {
+        GridManager.OnMachinePlaced  -= OnMachinePlaced;
+        GridManager.OnMachineRemoved -= OnMachineRemoved;
+    }
+
+    private void OnMachinePlaced(PlacedMachine placed)
+    {
+        if (placed.instance is not ExtractorInstance extractor) return;
+        var node = GetNodeAt(placed.cell);
+        extractor.SetNode(node);
+    }
+
+    private void OnMachineRemoved(PlacedMachine placed)
+    {
+        if (placed.instance is not ExtractorInstance extractor) return;
+        extractor.ClearNode();
     }
 
     public NodeInstance GetNodeAt(Vector2Int cell)

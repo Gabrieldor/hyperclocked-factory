@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6df86ee1e316ca4ca2b6b5fa9dc3b9b, type: 3}
+  m_Name: Item_SteamExtractor
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  itemName: Steam Extractor
+  icon: {fileID: -2661058482978203409, guid: 48672a4a578a64a44aea656710a891b9, type: 3}
+  stackSize: 64
+  placeableMachine: {fileID: 11400000, guid: b1aad44563c57324284154e2317e38b9, type: 2}
+  placeablePipe: {fileID: 0}

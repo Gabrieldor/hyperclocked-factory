@@ -7,9 +7,10 @@ using UnityEditor;
 public static class SOSetupEditor
 {
     // ── Paths ────────────────────────────────────────────────────────────────
-    private const string ItemDir    = "Assets/Data/Items";
-    private const string RecipeDir  = "Assets/Data/Recipes";
-    private const string MachineDir = "Assets/Data/Machines";
+    private const string ItemDir       = "Assets/Data/Items";
+    private const string RecipeDir     = "Assets/Data/Recipes";
+    private const string MachineDir    = "Assets/Data/Machines";
+    private const string MilestoneDir  = "Assets/Data/Milestones";
 
     private const string ExtractorSheet = "Assets/Art/Machines/SteamExtractorSpriteSheet.png";
     private const string SmelterSheet   = "Assets/Art/Machines/SteamAlloySmelterSpriteSheet.png";
@@ -70,6 +71,7 @@ public static class SOSetupEditor
             so.tileSizeY        = 1;
             so.availableRecipes = System.Array.Empty<RecipeData>();
             so.sprite           = extractorSprite;
+            so.isExtractor      = true;
         });
 
         GetOrCreate<MachineData>(MachineDir, "Steam_PrimitiveFurnace", so =>
@@ -82,10 +84,52 @@ public static class SOSetupEditor
             so.sprite           = furnaceSprite;
         });
 
+        // Machine items (for hotbar placement)
+        var extractorMachineData = AssetDatabase.LoadAssetAtPath<MachineData>($"{MachineDir}/Steam_Extractor.asset");
+        var furnaceMachineData   = AssetDatabase.LoadAssetAtPath<MachineData>($"{MachineDir}/Steam_PrimitiveFurnace.asset");
+
+        GetOrCreate<ItemData>(ItemDir, "Item_SteamExtractor", so =>
+        {
+            so.itemName         = "Steam Extractor";
+            so.stackSize        = 64;
+            so.placeableMachine = extractorMachineData;
+            so.icon             = extractorSprite;
+        });
+
+        GetOrCreate<ItemData>(ItemDir, "Item_PrimitiveFurnace", so =>
+        {
+            so.itemName         = "Primitive Furnace";
+            so.stackSize        = 64;
+            so.placeableMachine = furnaceMachineData;
+            so.icon             = furnaceSprite;
+        });
+
+        // Milestones
+        if (!System.IO.Directory.Exists(MilestoneDir))
+            System.IO.Directory.CreateDirectory(MilestoneDir);
+
+        // S0 — auto-fires on scene load (no trigger); unlocks starter machines
+        var s0 = GetOrCreate<MilestoneData>(MilestoneDir, "Milestone_S0", so =>
+        {
+            so.milestoneName   = "S0 — Steam Age Begins";
+            so.triggerItem     = null;
+            so.triggerMachine  = null;
+            so.prerequisites   = System.Array.Empty<MilestoneData>();
+        });
+
+        // S1 — fires on first Bronze Ingot produced
+        GetOrCreate<MilestoneData>(MilestoneDir, "Milestone_S1", so =>
+        {
+            so.milestoneName   = "S1 — First Alloy";
+            so.triggerItem     = bronzeIngot;
+            so.triggerMachine  = null;
+            so.prerequisites   = new[] { s0 };
+        });
+
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         Debug.Log("[HF] Phase 1 SO assets created.");
-        EditorUtility.DisplayDialog("HF Setup", "Phase 1 SO assets created.\nCheck Assets/Data/ for all items, recipes, and machines.", "OK");
+        EditorUtility.DisplayDialog("HF Setup", "Phase 1 SO assets created.\nCheck Assets/Data/ for all items, recipes, machines, and milestones.", "OK");
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────

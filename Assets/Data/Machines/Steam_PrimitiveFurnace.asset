@@ -24,3 +24,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2febfb4cbb243314587f0fddfad96289, type: 2}
   sprite: {fileID: 3881324236535122659, guid: f884844a27db9934a9848307977cf9af, type: 3}
   animatorController: {fileID: 0}
+  isExtractor: 0

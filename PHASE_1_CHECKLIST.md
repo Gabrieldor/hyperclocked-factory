@@ -64,75 +64,76 @@
 
 ## 6. Resource Nodes
 
-- [ ] `NodeData` SO — resourceType (ItemData ref), worldCell (Vector2Int)
-- [ ] `NodeManager` — holds list of all nodes; knows which have an Extractor
-- [ ] Node visual — inactive sprite (slot outline); active sprite (glowing) when Extractor placed
-- [ ] Pre-place 3 nodes in GameScene: Copper Ore, Tin Ore, Coal (fixed positions)
-- [ ] Nodes render on machine layer (behind pipes)
+- [x] `NodeData` SO — resourceType (ItemData ref), worldCell (Vector2Int)
+- [x] `NodeManager` — holds list of all nodes; knows which have an Extractor
+- [x] Node visual — inactive sprite (slot outline); active sprite (glowing) when Extractor placed
+- [x] Pre-place 3 nodes in GameScene: Copper Ore, Tin Ore, Coal (fixed positions)
+- [x] Nodes render on machine layer (behind pipes)
 
 ---
 
 ## 7. Item Pipe Network
 
-- [ ] `PipeData` SO — color (enum), layer (item / fluid)
-- [ ] Pipe layer in GridManager (separate dict from machines)
-- [ ] Place / remove pipes on pipe layer (independent of machine layer)
-- [ ] Bitmask auto-connect — pipe sprite updates when neighbors change (4-dir, 16 combos)
-- [ ] Pipe color — tap pipe → cycle through colors; only same-color segments connect
-- [ ] `PipeNetwork` — adjacency graph of connected same-color pipe segments
-- [ ] Port assignment — player assigns port direction per pipe-to-machine connection
-- [ ] BFS routing — finds path from machine output port to nearest accepting input port
-- [ ] Item transit — items travel at 1 tile / tick (1s); invisible in pipe (GT style)
-- [ ] Output full → machine halts until pipe clears
+- [x] `PipeData` SO — color (enum), layer (item / fluid)
+- [x] Pipe layer in GridManager (separate dict from machines)
+- [x] Place / remove pipes on pipe layer (independent of machine layer)
+- [x] Bitmask auto-connect — pipe sprite updates when neighbors change (4-dir, 16 combos)
+- [x] Pipe color — tap pipe → cycle through colors; only same-color segments connect
+- [x] `PipeNetwork` — adjacency graph of connected same-color pipe segments
+- [x] Port assignment — player assigns port direction per pipe-to-machine connection
+- [x] BFS routing — finds path from machine output port to nearest accepting input port
+- [x] Item transit — items travel at 1 tile / tick (1s); invisible in pipe (GT style)
+- [ ] Output full → machine halts until pipe clears ← wired in Section 8 (MachineState)
 
 ---
 
 ## 8. Machine System
 
-- [ ] `MachineState` enum — Idle / Processing / OutputFull / NoInput / NoPower / Halted
-- [ ] `MachineInstance` — runtime state (current recipe, progress timer, input/output buffers)
-- [ ] `TickManager` — fires global tick every 1s; all machines + extractors subscribe
-- [ ] On tick: pull inputs from pipe, advance timer, push outputs to pipe
-- [ ] Machine state transitions (idle → processing → output full, etc.)
-- [ ] Machine info panel (tap machine) — name, recipe, status, progress bar, Remove button
+- [x] `MachineState` enum — Idle / Processing / OutputFull / NoInput / NoPower / Halted
+- [x] `MachineInstance` — runtime state (current recipe, progress timer, input/output buffers)
+- [x] `TickManager` — fires global tick every 1s; all machines + extractors subscribe
+- [x] On tick: pull inputs from pipe, advance timer, push outputs to pipe
+- [x] Machine state transitions (idle → processing → output full, etc.)
+- [x] Machine info panel (tap machine) — name, recipe, status, progress bar, Remove button
+- [x] Output full → machine halts until pipe clears
 
 ---
 
 ## 9. Steam Extractor
 
-- [ ] `ExtractorInstance` extends `MachineInstance`
-- [ ] Must be placed on a Node tile (placement validation)
-- [ ] On tick: produces 1× node resource → pushes to output pipe
-- [ ] Active/inactive visual driven by `NodeManager`
+- [x] `ExtractorInstance` extends `MachineInstance`
+- [x] Must be placed on a Node tile (placement validation)
+- [x] On tick: produces 1× node resource → pushes to output pipe
+- [x] Active/inactive visual driven by `NodeManager`
 
 ---
 
 ## 10. Primitive Furnace
 
-- [ ] Standard `MachineInstance` — no power (coal-fueled placeholder for prototype)
-- [ ] Recipes: Copper Dust → Copper Ingot; Copper + Tin Dust → Bronze Ingot
-- [ ] Select active recipe via Machine Info Panel
-- [ ] Processing time 4s (4 ticks)
+- [x] Standard `MachineInstance` — no power (coal-fueled placeholder for prototype)
+- [x] Recipes: Copper Dust → Copper Ingot; Copper + Tin Dust → Bronze Ingot
+- [x] Select active recipe via Machine Info Panel
+- [x] Processing time 4s (4 ticks)
 
 ---
 
 ## 11. Milestone System
 
-- [ ] `MilestoneManager` singleton — tracks unlocked milestones, listens for item produce events
-- [ ] On item produced → check all pending milestones for trigger match → fire unlock
-- [ ] On machine built → check trigger match → fire unlock
-- [ ] S0 — fires automatically on scene load (unlocks Extractor, Furnace, Boiler slots)
-- [ ] S1 — fires on first Bronze Ingot produced
+- [x] `MilestoneManager` singleton — tracks unlocked milestones, listens for item produce events
+- [x] On item produced → check all pending milestones for trigger match → fire unlock
+- [x] On machine built → check trigger match → fire unlock
+- [x] S0 — fires automatically on scene load (unlocks Extractor, Furnace, Boiler slots)
+- [x] S1 — fires on first Bronze Ingot produced
 
 ---
 
 ## 12. Milestone Tracker UI
 
-- [ ] Milestone screen (full-screen, opened from toolbar)
-- [ ] Tree view — nodes for S0, S1, S2, A1, B1, B2, B3, G1
-- [ ] Node states: locked (grey) / available (lit) / unlocked (green)
-- [ ] Tap node → shows condition text and unlock reward
-- [ ] Updates in real time as milestones fire
+- [x] Milestone screen (full-screen, opened from toolbar)
+- [x] Tree view — nodes for S0, S1 (Phase 1 SOs; remaining nodes added in Phase 2)
+- [x] Node states: locked (grey) / available (lit) / unlocked (green)
+- [x] Tap node → shows condition text and unlock reward
+- [x] Updates in real time as milestones fire
 
 ---
 
@@ -159,11 +160,11 @@
 | GridManager + floor tilemap     | [x]  |
 | Camera pan + zoom               | [x]  |
 | Hotbar + inventory UI           | [x]  |
-| Resource nodes                  | [ ]  |
-| Item pipe network (BFS routing) | [ ]  |
-| Machine tick system             | [ ]  |
-| Steam Extractor                 | [ ]  |
-| Primitive Furnace               | [ ]  |
-| Milestone system                | [ ]  |
-| Milestone tracker UI            | [ ]  |
+| Resource nodes                  | [x]  |
+| Item pipe network (BFS routing) | [x]  |
+| Machine tick system             | [x]  |
+| Steam Extractor                 | [x]  |
+| Primitive Furnace               | [x]  |
+| Milestone system                | [x]  |
+| Milestone tracker UI            | [x]  |
 | End-to-end demo passing         | [ ]  |
